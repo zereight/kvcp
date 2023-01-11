@@ -1,6 +1,7 @@
 /// <reference types="cypress" />;
 
-import { kakaoViewDataList, 시간 } from "../../src/constants/kakaoViewData";
+import { kakaoViewDataList } from "../../src/constants/kakaoViewData";
+import { 시간 } from "../../src/constants/time";
 
 const 카카오뷰_창작센터_URL = "https://creators.kakao.com/";
 const 카카오뷰_내_보드창작 = "https://creators.kakao.com/my-channels";

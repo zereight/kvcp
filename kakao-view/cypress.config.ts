@@ -7,4 +7,5 @@ export default defineConfig({
     },
     testIsolation: false, // 각 it들마다 초기화 되는거 방지
   },
+  chromeWebSecurity: false,
 });
