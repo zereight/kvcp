@@ -1,6 +1,6 @@
 /// <reference types="cypress" />;
 
-import { kakaoViewDataList } from "../../src/constants/kakaoViewData";
+import coupangProductDataList from "../../쿠팡상품데이터 Sun, 15 Jan 2023 04:49:45 GMT.json";
 import { 시간 } from "../../src/constants/time";
 
 const 카카오뷰_창작센터_URL = "https://creators.kakao.com/";
@@ -24,47 +24,63 @@ describe("template spec", () => {
     cy.pause();
   });
 
-  it("원하는 채널의 보드관리 화면 들어간다.", () => {
-    cy.visit(카카오뷰_내_보드창작);
-    /**
-     * 원하는 채널 고르기
-     */
-
-    cy.get("#mainContent > ul").contains("쇼핑혁").click();
+  it("원하는 채널에 들어간다.", () => {
+    const myChannelNameList = ["쇼핑혁"] as const;
 
     /**
-     * 보드 관리화면 들어가기
+     * 각 채널별로 예약하는 시간대를 다르게해보자
      */
-    cy.get(
-      "#root > div.container-doc > main > section > aside > nav > ul > li:nth-child(2) > a"
-    ).click();
-  });
+    const 채널별_예약시간: Record<
+      typeof myChannelNameList[number],
+      keyof typeof 시간
+    > = {
+      쇼핑혁: "저녁",
+    };
 
-  it("내가 원하는 보드제목/설명/링크를 넣는다.", () => {
-    kakaoViewDataList.forEach((kakaoViewData) => {
+    myChannelNameList.forEach((channelName) => {
+      cy.visit(카카오뷰_내_보드창작);
+
       /**
-       * 새 보드 만들기 클릭
+       * 원하는 채널 고르기
        */
-      cy.get("#mainContent > div.wrap_tit > div > a").click();
-
-      const 쿠팡제휴문구 =
-        "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.";
-      cy.get("#boardTitle").type(kakaoViewData.title);
-      cy.get("#boardCmt").type(
-        `${kakaoViewData.description}
-      👇
-      👇
-      ${쿠팡제휴문구}`
-      );
+      cy.get("#mainContent > ul").contains(channelName).click();
 
       /**
-       * 3번째 보드 유형으로 변경
+       * 보드 관리화면 들어가기
        */
       cy.get(
-        "#mainContent > div.editor_board > div > div.area_editor > div:nth-child(3) > div.edit_template > ul > li:nth-child(3) > button"
+        "#root > div.container-doc > main > section > aside > nav > ul > li:nth-child(2) > a"
       ).click();
 
-      kakaoViewData.products.forEach((data) => {
+      /**
+       * 카카오뷰에 올릴 데이터들을 순회하여 보드를 등록합니다.
+       */
+      coupangProductDataList.forEach((coupangProductData) => {
+        /**
+         * 새 보드 만들기 클릭
+         */
+        cy.get("#mainContent > div.wrap_tit > div > a").click();
+
+        /**
+         * 쿠팡 제휴 문구 입력
+         */
+        const 쿠팡제휴문구 =
+          "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.";
+        cy.get("#boardTitle").type(coupangProductData.name);
+        cy.get("#boardCmt").type(
+          `${coupangProductData.name}
+        👇
+        👇
+        ${쿠팡제휴문구}`
+        );
+
+        /**
+         * 3번째 보드 유형으로 변경
+         */
+        cy.get(
+          "#mainContent > div.editor_board > div > div.area_editor > div:nth-child(3) > div.edit_template > ul > li:nth-child(3) > button"
+        ).click();
+
         /**
          * 쿠팡 파트너스링크를 넣기 위해서 "링크 직접입력" 클릭
          */
@@ -77,7 +93,7 @@ describe("template spec", () => {
          */
         cy.get(
           "#mainContent > div.editor_board > div > div.area_contents > div.cont_tab > form > div.item_form.type_search > div > input"
-        ).type(data.link);
+        ).type(coupangProductData.partnersLink);
 
         /**
          * 링크 찾기 버튼 클릭
@@ -122,7 +138,7 @@ describe("template spec", () => {
         cy.get(
           "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(5) > div > div > ul"
         )
-          .contains(시간[data.publishTime].시)
+          .contains(시간[채널별_예약시간[channelName]].시)
           .click();
 
         cy.get(
@@ -131,7 +147,7 @@ describe("template spec", () => {
         cy.get(
           "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(7) > div > div > ul"
         )
-          .contains(시간[data.publishTime].분)
+          .contains(시간[채널별_예약시간[channelName]].분)
           .click();
 
         /**
