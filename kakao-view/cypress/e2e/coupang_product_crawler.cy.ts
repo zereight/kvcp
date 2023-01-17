@@ -8,8 +8,7 @@ import 쿠팡파트너스_계정 from "../../src/constants/개인정보/쿠팡�
 
 const 쿠팡홈페이지 = "https://www.coupang.com/";
 
-const 크롤링하고싶은페이지 =
-  "https://www.coupang.com/np/campaigns/82/components/194176?listSize=60&brand=&offerCondition=&filterType=&isPriceRange=false&minPrice=&maxPrice=&page=1&channel=user&fromComponent=Y&selectedPlpKeepFilter=&sorter=bestAsc&filter=&component=194176&rating=0";
+const 크롤링하고싶은페이지 = "https://www.coupang.com/np/categories/509624";
 
 const 쿠팡파트너스_메인_URL = "https://partners.coupang.com";
 /**
@@ -21,6 +20,7 @@ const 쿠팡파트너스_로그인_URL =
 
 const crawledProducts: {
   id: number;
+  index: number;
   name: string;
   title: string;
   partnersLink: string;
@@ -55,6 +55,7 @@ describe("쿠팡에서 상품이름들을 크롤링하기", () => {
             name: productName.replace(/\n/gi, "").split(",")[0].trim(), // 쿠팡은 ,를 기준으로 첫번째가 상품명진짜인 경우가 많은듯
             title: productName.replace(/\n/gi, "").split(",")[0].trim(),
             partnersLink: 쿠팡홈페이지,
+            index,
           });
         }
       });
@@ -147,6 +148,7 @@ describe("쿠팡에서 상품이름들을 크롤링하기", () => {
     });
 
     crawledProducts.forEach((crawledProduct, crawledProductIndex) => {
+      cy.pause();
       // 홈탭 클릭
       cy.get("#app-header > ul > li:nth-child(2) > a > span").click();
 

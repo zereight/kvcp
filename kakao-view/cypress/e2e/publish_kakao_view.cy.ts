@@ -1,6 +1,6 @@
 /// <reference types="cypress" />;
 
-import coupangProductDataList from "../../쿠팡상품데이터 Sun, 15 Jan 2023 04:49:45 GMT.json";
+import coupangProductDataList from "../../쿠팡상품데이터 beta.json";
 import { 시간 } from "../../src/constants/time";
 
 const 카카오뷰_창작센터_URL = "https://creators.kakao.com/";
@@ -26,6 +26,7 @@ describe("template spec", () => {
 
   it("원하는 채널에 들어간다.", () => {
     const myChannelNameList = ["쇼핑혁"] as const;
+    // const myChannelNameList = ["리빙피쉬(쇼핑)"] as const;
 
     /**
      * 각 채널별로 예약하는 시간대를 다르게해보자
@@ -34,7 +35,8 @@ describe("template spec", () => {
       typeof myChannelNameList[number],
       keyof typeof 시간
     > = {
-      쇼핑혁: "저녁",
+      쇼핑혁: "점심",
+      // ["리빙피쉬(쇼핑)"]: "아침",
     };
 
     myChannelNameList.forEach((channelName) => {
@@ -66,7 +68,7 @@ describe("template spec", () => {
          */
         const 쿠팡제휴문구 =
           "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.";
-        cy.get("#boardTitle").type(coupangProductData.name);
+        cy.get("#boardTitle").type(`💝 ${coupangProductData.name}`);
         cy.get("#boardCmt").type(
           `${coupangProductData.name}
         👇
@@ -164,6 +166,23 @@ describe("template spec", () => {
         cy.get(
           "#layer > div > div > div.layer_body > div > div:nth-child(4) > div > label > span.ico_creators.ico_check"
         ).click();
+
+        /**
+         * 발행하기 클릭
+         */
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div.wrap_btn.align_r > button.btn_g.btn_primary.btn_icon"
+        ).click();
+
+        /**
+         * 발행완료 확인
+         */
+        cy.get("#layer > div > div > div.layer_foot > div > button").click();
+
+        /**
+         * 예약발행숫자읽기
+         * #mainContent > div.tab_g > ul > li:nth-child(2) > a
+         */
 
         /**
          * 2번 실행될 수도 있어서, 발행하기는 스스로 선택하기
