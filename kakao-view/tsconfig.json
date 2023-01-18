@@ -17,6 +17,6 @@
     "jsx": "react-jsx",
     "types": ["cypress"]
   },
-  "include": ["src"],
+  "include": ["src", "cypress/fixtures/constants"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
