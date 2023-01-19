@@ -18,11 +18,12 @@ import newPickDataList from "../../../../뉴스픽 크롤링 결과.json";
 describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
   const 카카오뷰_내_보드창작 = "https://creators.kakao.com/my-channels";
 
+  const 내_채널리스트 = ["뉴스혁", "유머혁"];
   /**
    * 내 채널
    * ! 채널 당 하루 발행량은 10개 입니다 주의해주세요
    */
-  const myChannelName = "뉴스혁";
+  const 지금_발행할_내_채널 = "유머혁";
 
   /**
    * 카테고리를 설정합니다.
@@ -33,11 +34,15 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
   /**
    * 각 채널별로 예약시간대 정하기
    */
-  const 채널별_예약시간: Record<typeof myChannelName, keyof typeof 시간> = {
-    뉴스혁: "아침",
+  const 채널별_예약시간: Record<
+    typeof 내_채널리스트[number],
+    keyof typeof 시간
+  > = {
+    뉴스혁: "밤",
+    유머혁: "밤",
   };
 
-  const day = 20; // 발행하고자 하는 날짜(일)을 입력한다. (월은 현재 달로 가정한다.)
+  const day = 19; // 발행하고자 하는 날짜(일)을 입력한다. (월은 현재 달로 가정한다.)
 
   it("원하는 채널의 보드  화면으로 들어간다.", () => {
     cy.visit(카카오뷰_내_보드창작);
@@ -45,7 +50,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
     /**
      * 원하는 채널 고르기
      */
-    cy.get("#mainContent > ul").contains(myChannelName).click();
+    cy.get("#mainContent > ul").contains(지금_발행할_내_채널).click();
 
     /**
      * 보드 관리화면 들어가기
@@ -148,7 +153,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
       cy.get(
         "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(5) > div > div > ul"
       )
-        .contains(시간[채널별_예약시간[myChannelName]].시)
+        .contains(시간[채널별_예약시간[지금_발행할_내_채널]].시)
         .click();
 
       cy.get(
@@ -157,7 +162,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
       cy.get(
         "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(7) > div > div > ul"
       )
-        .contains(시간[채널별_예약시간[myChannelName]].분)
+        .contains(시간[채널별_예약시간[지금_발행할_내_채널]].분)
         .click();
 
       /**
@@ -174,7 +179,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
         .click({ force: true })
         .click({ force: true });
 
-      cy.wait(1000);
+      cy.wait(200);
 
       /**
        * 카테고리 선택
