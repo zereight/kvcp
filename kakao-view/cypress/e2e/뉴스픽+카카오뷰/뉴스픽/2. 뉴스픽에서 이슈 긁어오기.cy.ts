@@ -12,6 +12,11 @@ describe("2. 뉴스픽에서 이슈 긁어오기", () => {
     cy.get("#tab_24").click();
 
     cy.wait(1000);
+    cy.scrollTo(10000, 10000);
+    cy.wait(1000);
+    cy.scrollTo(10000, 10000);
+    cy.wait(1000);
+    cy.scrollTo(10000, 10000);
 
     const newsPickDataList: crawledNewsPickData[] = [];
 
@@ -61,10 +66,9 @@ describe("2. 뉴스픽에서 이슈 긁어오기", () => {
             });
 
           newsPickDataList.push(newsPickData);
+          cy.writeFile(`뉴스픽 크롤링 결과.json`, newsPickDataList);
           cy.wait(100);
         });
     });
-
-    cy.writeFile(`뉴스픽 크롤링 결과.json`, newsPickDataList);
   });
 });
