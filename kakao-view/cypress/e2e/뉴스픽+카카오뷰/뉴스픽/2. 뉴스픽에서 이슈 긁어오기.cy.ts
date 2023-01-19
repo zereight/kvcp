@@ -23,20 +23,11 @@ describe("2. 뉴스픽에서 이슈 긁어오기", () => {
     // 뉴스픽 컨텐츠 읽기
     const 뉴스픽_이슈들 = cy.get("#channelList").children();
     뉴스픽_이슈들.each(($뉴스픽이슈, 뉴스픽이슈Index) => {
-      const newsPickData: crawledNewsPickData = {
-        index: -1,
-        title: "",
-        description: "",
-        link: "",
-      };
-
       // 제목 담기
       cy.wrap($뉴스픽이슈)
         .get(".info a .text-overflow2")
         .then(($title) => {
           const title = $title.get(뉴스픽이슈Index).textContent || "";
-          newsPickData.title = title;
-          newsPickData.description = title;
 
           // 링크복사버튼 강제 클릭
           cy.wrap($뉴스픽이슈)
@@ -52,23 +43,26 @@ describe("2. 뉴스픽에서 이슈 긁어오기", () => {
                */
               cy.window().then((win) => {
                 win.navigator.clipboard.readText().then((link: string) => {
-                  newsPickData.link = link;
-
-                  // 복사완료 얼럿뜨는거 닫기
-                  cy.on("window:alert", () => {
-                    // 데이터 추가
-                    newsPickData.index = 뉴스픽이슈Index;
-
-                    return false;
+                  // 데이터 추가
+                  newsPickDataList.push({
+                    title,
+                    description: title,
+                    link,
+                    index: 뉴스픽이슈Index,
                   });
+                });
+
+                // 복사완료 얼럿뜨는거 닫기
+                cy.on("window:alert", () => {
+                  return false;
                 });
               });
             });
 
-          newsPickDataList.push(newsPickData);
-          cy.writeFile(`뉴스픽 크롤링 결과.json`, newsPickDataList);
-          cy.wait(100);
+          cy.pause();
         });
+
+      cy.writeFile(`뉴스픽 크롤링 결과.json`, newsPickDataList);
     });
   });
 });
