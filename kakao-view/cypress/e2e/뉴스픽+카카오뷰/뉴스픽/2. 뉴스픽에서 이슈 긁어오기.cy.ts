@@ -48,22 +48,20 @@ describe("2. 뉴스픽에서 이슈 긁어오기", () => {
               cy.window().then((win) => {
                 win.navigator.clipboard.readText().then((link: string) => {
                   newsPickData.link = link;
+
+                  // 복사완료 얼럿뜨는거 닫기
+                  cy.on("window:alert", () => {
+                    // 데이터 추가
+                    newsPickData.index = 뉴스픽이슈Index;
+
+                    return false;
+                  });
                 });
               });
             });
 
-          cy.wait(100);
-
-          // 복사완료 얼럿뜨는거 닫기
-          cy.on("window:alert", () => {
-            return false;
-          });
-
-          cy.wait(100);
-
-          // 데이터 추가
-          newsPickData.index = 뉴스픽이슈Index;
           newsPickDataList.push(newsPickData);
+          cy.wait(100);
         });
     });
 

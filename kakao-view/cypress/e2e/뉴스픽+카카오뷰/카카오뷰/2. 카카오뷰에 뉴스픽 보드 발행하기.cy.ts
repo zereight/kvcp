@@ -25,13 +25,19 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
   const myChannelName = "뉴스혁";
 
   /**
+   * 카테고리를 설정합니다.
+   */
+  const category1 = "시선이 담긴 이슈";
+  const category2 = "유머";
+
+  /**
    * 각 채널별로 예약시간대 정하기
    */
   const 채널별_예약시간: Record<typeof myChannelName, keyof typeof 시간> = {
     뉴스혁: "아침",
   };
 
-  const day = 19; // 발행하고자 하는 날짜(일)을 입력한다. (월은 현재 달로 가정한다.)
+  const day = 20; // 발행하고자 하는 날짜(일)을 입력한다. (월은 현재 달로 가정한다.)
 
   it("원하는 채널의 보드  화면으로 들어간다.", () => {
     cy.visit(카카오뷰_내_보드창작);
@@ -155,29 +161,26 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
         .click();
 
       /**
-       * 날짜 선택 (같은 월 임을 가정한다)
+       * 날짜 입력란 (같은 월 임을 가정한다)
        */
       cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar > div.DayPickerInput"
+        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar > div.DayPickerInput > input"
       ).click();
 
-      /**
-       *  발행하고자 하는 날짜를 선택합니다.
-       */
-
       cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar .DayPickerInput-OverlayWrapper"
+        `#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar > div.DayPickerInput > div > div > div > div > div.DayPicker-Months > div > div.DayPicker-Body `
       )
         .contains(day)
-        .click();
+        .click({ force: true })
+        .click({ force: true });
+
+      cy.wait(1000);
 
       /**
        * 카테고리 선택
        */
-      cy.get("#layer > div > div > div.layer_body")
-        .contains("시선이 담긴 이슈")
-        .click();
-      cy.get("#layer > div > div > div.layer_body").contains("유머").click();
+      cy.get("#layer > div > div > div.layer_body").contains(category1).click();
+      cy.get("#layer > div > div > div.layer_body").contains(category2).click();
 
       /**
        * 수익문구 약관 선택
