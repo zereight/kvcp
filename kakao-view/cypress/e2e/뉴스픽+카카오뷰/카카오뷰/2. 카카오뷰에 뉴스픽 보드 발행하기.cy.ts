@@ -18,12 +18,21 @@ import newPickDataList from "../../../../뉴스픽 크롤링 결과.json";
 describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
   const 카카오뷰_내_보드창작 = "https://creators.kakao.com/my-channels";
 
-  const 내_채널리스트 = ["뉴스혁", "유머혁", "유머러스혁"] as const;
+  /**
+   * 각 채널은 이름을 다르게해주세요. 그래야 그 채널만 클릭이 가능합니다.
+   */
+  const 내_채널리스트 = [
+    "뉴스혁",
+    "유머혁",
+    "유머러스혁",
+    "완죤재밌지",
+  ] as const;
+
   /**
    * 내 채널
    * ! 채널 당 하루 발행량은 10개 입니다 주의해주세요
    */
-  const 지금_발행할_내_채널: typeof 내_채널리스트[number] = "유머혁";
+  const 지금_발행할_내_채널: typeof 내_채널리스트[number] = "완죤재밌지";
 
   /**
    * 각 채널별로 예약시간대 정하기
@@ -35,6 +44,8 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
     유머러스혁: "아침",
     뉴스혁: "점심",
     유머혁: "저녁",
+
+    완죤재밌지: "밤",
   };
 
   /**
@@ -44,7 +55,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
   const category2 = "유머";
 
   // 발행하고자 하는 날짜(일)을 입력한다. (월은 현재 달로 가정한다.)
-  const day = 20;
+  const day = 21;
 
   it("원하는 채널의 보드  화면으로 들어간다.", () => {
     cy.visit(카카오뷰_내_보드창작);
@@ -78,13 +89,14 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
       const 제휴문구 =
         "이 포스팅은 뉴스픽 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.";
 
-      cy.get("#boardTitle").type(`${newPickData.title}`);
+      cy.get("#boardTitle").type(`${newPickData.title}`, { delay: 0 });
 
       cy.get("#boardCmt").type(
         `${newPickData.title}
             👇
             👇
-            ${제휴문구}`
+            ${제휴문구}`,
+        { delay: 0 }
       );
 
       /**
@@ -106,7 +118,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
        */
       cy.get(
         "#mainContent > div.editor_board > div > div.area_contents > div.cont_tab > form > div.item_form.type_search > div > input"
-      ).type(newPickData.link);
+      ).type(newPickData.link, { delay: 0 });
 
       /**
        * 링크 찾기 버튼 클릭
@@ -175,11 +187,10 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
       ).click();
 
       cy.get(
-        `#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar > div.DayPickerInput > div > div > div > div > div.DayPicker-Months > div > div.DayPicker-Body `
+        `#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar .DayPicker-Week`
       )
         .contains(day)
-        .click({ force: true })
-        .click({ force: true });
+        .click();
 
       cy.wait(200);
 
