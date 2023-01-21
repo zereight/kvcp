@@ -38,7 +38,9 @@ describe("3. 크롤링한거에 파트너스 링크 추가", () => {
        */
       cy.get(
         "#root > div > div > div.workspace-container > div > div > div.affiliate-page > div > div > div.ant-spin-nested-loading.page-spin-container > div > div > div > div > div > div > div > div:nth-child(1) > div > div > div > div > span > input"
-      ).type(`${encodeURIComponent(crawledProduct.name)}{enter}`);
+      ).type(`${encodeURIComponent(crawledProduct.name)}{enter}`, {
+        delay: 0,
+      });
 
       cy.wait(1500);
 
@@ -46,7 +48,7 @@ describe("3. 크롤링한거에 파트너스 링크 추가", () => {
         if ($body.find(".product-item").length) {
           // 검색결과 있으면,
 
-          cy.wait(1500);
+          cy.wait(500);
 
           cy.get(".product-item").each(
             ($productElement, productItemIndex, $$productItemList) => {
@@ -101,7 +103,7 @@ const 링크따기 = (
    */
   cy.wrap($상품el).contains("링크 생성").click({ force: true });
 
-  cy.wait(1500);
+  cy.wait(500);
 
   /**
    * 비밀번호 입력, 한번하면 몇 분이상 안해도됨
@@ -109,14 +111,14 @@ const 링크따기 = (
 
   cy.get("body").then(($body) => {
     if ($body.find("#password").length > 0) {
-      cy.get("#password").type(쿠팡파트너스_계정.pw);
+      cy.get("#password").type(쿠팡파트너스_계정.pw, { delay: 0 });
       cy.get(
         "body > div:nth-child(9) > div > div.ant-modal-wrap.modal.auth-modal > div > div.ant-modal-content > div > form > div.modal-footer > button.ant-btn.ant-btn-primary.ant-btn-lg"
       ).click();
     }
   });
 
-  cy.wait(1500);
+  cy.wait(100);
 
   cy.get(
     "#root > div > div > div.workspace-container > div > div > div.affiliate-page > div > div > div.ant-spin-nested-loading.page-spin-container > div > div > div.cp-row.bg-grey > div > div > div > section > section:nth-child(1) > div > div > div.unselectable-input.shorten-url-input.large"

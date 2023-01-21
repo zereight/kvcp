@@ -32,7 +32,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
    * 내 채널
    * ! 채널 당 하루 발행량은 10개 입니다 주의해주세요
    */
-  const 지금_발행할_내_채널: typeof 내_채널리스트[number] = "완죤재밌지";
+  const 지금_발행할_내_채널: typeof 내_채널리스트[number] = "유머러스혁";
 
   /**
    * 각 채널별로 예약시간대 정하기
@@ -44,7 +44,6 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
     유머러스혁: "아침",
     뉴스혁: "점심",
     유머혁: "저녁",
-
     완죤재밌지: "밤",
   };
 
@@ -55,7 +54,7 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
   const category2 = "유머";
 
   // 발행하고자 하는 날짜(일)을 입력한다. (월은 현재 달로 가정한다.)
-  const day = 21;
+  const day = 22;
 
   it("원하는 채널의 보드  화면으로 들어간다.", () => {
     cy.visit(카카오뷰_내_보드창작);
@@ -146,88 +145,95 @@ describe("2. 카카오뷰에 뉴스픽 보드 발행하기", () => {
         "#mainContent > div.wrap_btn > div.align_r > button.btn_g.btn_primary.btn_icon"
       ).click();
 
-      /**
-       * !   발행 팝업이 떴음
-       */
+      const 발행_팝업_처리 = () => {
+        /**
+         * !   발행 팝업이 떴음
+         */
 
-      /**
-       * 예약발행 항목 선택
-       */
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(2) > label > span.ico_creators.ico_radio"
-      ).click();
+        /**
+         * 예약발행 항목 선택
+         */
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(2) > label > span.ico_creators.ico_radio"
+        ).click();
 
-      /**
-       * 시간에 따라 발행시점 선택
-       */
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(5) > div > a"
-      ).click();
+        /**
+         * 시간에 따라 발행시점 선택
+         */
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(5) > div > a"
+        ).click();
 
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(5) > div > div > ul"
-      )
-        .contains(시간[채널별_예약시간[지금_발행할_내_채널]].시)
-        .click();
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(5) > div > div > ul"
+        )
+          .contains(시간[채널별_예약시간[지금_발행할_내_채널]].시)
+          .click();
 
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(7) > div > a"
-      ).click();
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(7) > div > div > ul"
-      )
-        .contains(시간[채널별_예약시간[지금_발행할_내_채널]].분)
-        .click();
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(7) > div > a"
+        ).click();
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div:nth-child(7) > div > div > ul"
+        )
+          .contains(시간[채널별_예약시간[지금_발행할_내_채널]].분)
+          .click();
 
-      /**
-       * 날짜 입력란 (같은 월 임을 가정한다)
-       */
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar > div.DayPickerInput > input"
-      ).click();
+        /**
+         * 날짜 입력란 (같은 월 임을 가정한다)
+         */
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar > div.DayPickerInput > input"
+        ).click();
 
-      cy.get(
-        `#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar .DayPicker-Week`
-      )
-        .contains(day)
-        .click();
+        cy.get(
+          `#layer > div > div > div.layer_body > div > div:nth-child(2) > dl > dd > div > div.item_form.type_calendar .DayPicker-Week`
+        )
+          .contains(day)
+          .click();
 
-      cy.wait(200);
+        cy.wait(200);
 
-      /**
-       * 카테고리 선택
-       */
-      cy.get("#layer > div > div > div.layer_body").contains(category1).click();
-      cy.get("#layer > div > div > div.layer_body").contains(category2).click();
+        /**
+         * 카테고리 선택
+         */
+        cy.get("#layer > div > div > div.layer_body")
+          .contains(category1)
+          .click();
+        cy.get("#layer > div > div > div.layer_body")
+          .contains(category2)
+          .click();
 
-      /**
-       * 수익문구 약관 선택
-       */
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div:nth-child(4) > div > label > span.ico_creators.ico_check"
-      ).click();
+        /**
+         * 수익문구 약관 선택
+         */
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div:nth-child(4) > div > label > span.ico_creators.ico_check"
+        ).click();
 
-      /**
-       * 발행하기 클릭
-       */
-      cy.get(
-        "#layer > div > div > div.layer_body > div > div.wrap_btn.align_r > button.btn_g.btn_primary.btn_icon"
-      ).click();
+        /**
+         * 발행하기 클릭
+         */
+        cy.get(
+          "#layer > div > div > div.layer_body > div > div.wrap_btn.align_r > button.btn_g.btn_primary.btn_icon"
+        ).click();
 
-      /**
-       * 발행완료 확인
-       */
-      cy.get("#layer > div > div > div.layer_foot > div > button").click();
+        /**
+         * 발행완료 확인
+         */
+        cy.get("#layer > div > div > div.layer_foot > div > button").click();
 
-      /**
-       * 예약발행숫자읽기
-       * #mainContent > div.tab_g > ul > li:nth-child(2) > a
-       */
+        /**
+         * 예약발행숫자읽기
+         * #mainContent > div.tab_g > ul > li:nth-child(2) > a
+         */
 
-      /**
-       * 2번 실행될 수도 있어서, 발행하기는 스스로 선택하기
-       */
-      cy.pause();
+        /**
+         * 2번 실행될 수도 있어서, 발행하기는 스스로 선택하기
+         */
+        cy.pause();
+      };
+      발행_팝업_처리();
     });
   });
 });
