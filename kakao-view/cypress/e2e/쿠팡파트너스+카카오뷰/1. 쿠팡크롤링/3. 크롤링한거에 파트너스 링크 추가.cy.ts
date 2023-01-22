@@ -28,7 +28,8 @@ describe("3. 크롤링한거에 파트너스 링크 추가", () => {
 
     crawledProducts.forEach((crawledProduct, crawledProductIndex) => {
       // 렉걸려서 꺼지는 경우가 있기 때문에 매번 수동으로 시작을 눌러주오록함
-      cy.pause();
+      // cy.pause();
+      cy.wait(1000);
 
       // 홈탭 클릭
       cy.get("#app-header > ul > li:nth-child(2) > a > span").click();

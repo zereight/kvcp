@@ -4,8 +4,7 @@ import { crawledProducts } from "../../../fixtures/crawledProducts";
 
 const 쿠팡홈페이지 = "https://www.coupang.com/";
 
-const 크롤링하고싶은페이지 =
-  "https://www.coupang.com/np/search?component=178155&q=%EA%B1%B4%EC%A1%B0%EA%B8%B0&channel=user";
+const 크롤링하고싶은페이지 = "https://www.coupang.com/np/campaigns/3862";
 
 /**
  * * electron으로 열어주세요
