@@ -9,7 +9,8 @@
     "cy:run": "cypress run",
     "cy:run:gui": "npx cypress open",
     "dev": "nodemon --exec node --loader ts-node/esm ./src/selenium/test.ts",
-    "test": "node --loader ts-node/esm ./src/selenium/test.ts"
+    "쿠팡에서_크롤링하기": "node --loader ts-node/esm ./src/selenium/쿠팡에서_크롤링하기.ts",
+    "카카오뷰에_쿠팡파트너스_보드올리기": "node --loader ts-node/esm ./src/selenium/카카오뷰에_쿠팡파트너스_보드올리기.ts"
   },
   "dependencies": {
     "fs": "^0.0.1-security",

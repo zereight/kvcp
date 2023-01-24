@@ -7,10 +7,12 @@ import {
   Actions,
   WebElement,
 } from "selenium-webdriver";
-import { CrawledProducts } from "../types/crawledProducts";
+
 import fs from "fs";
 import { Options } from "selenium-webdriver/chrome.js";
 import 쿠팡파트너스계정 from "./쿠팡_파트너스_계정.private.json" assert { type: "json" };
+import { CrawledProducts } from "./types/CrawledProducts";
+import { Time } from "./constants/Time";
 
 const 크롤링하고싶은쿠팡페이지 =
   "https://www.coupang.com/np/campaigns/82/components/176422";
@@ -157,7 +159,6 @@ const 쿠팡크롤링한거_파트너스링크_저장하고_카카오뷰에_저�
           return 파트너스_링크;
         };
 
-      let 같은상품명찾음 = false;
       let 현재_보고있는_검색결과_상품 = 찾은_검색결과리스트[0]; // 아무것도 못찾으면 첫번째 링크를 넣기위함
 
       for (const 검색결과_아이템 of 찾은_검색결과리스트) {
@@ -165,7 +166,7 @@ const 쿠팡크롤링한거_파트너스링크_저장하고_카카오뷰에_저�
 
         if (검색결과_아이템_이름.includes(상품명)) {
           현재_보고있는_검색결과_상품 = 검색결과_아이템;
-          같은상품명찾음 = true;
+
           break;
         }
       }
