@@ -15,7 +15,7 @@ import { CrawledProducts } from "./types/CrawledProducts";
 import { Time } from "./constants/Time";
 
 const 크롤링하고싶은쿠팡페이지 =
-  "https://www.coupang.com/np/campaigns/82/components/176422";
+  "https://www.coupang.com/np/campaigns/82/components/178613?listSize=60&brand=&offerCondition=&filterType=&isPriceRange=false&minPrice=&maxPrice=&page=1&channel=user&fromComponent=N&selectedPlpKeepFilter=&sorter=saleCountDesc&filter=&component=178613&rating=0";
 
 const 쿠팡파트너스페이지 = "https://partners.coupang.com/#affiliate/ws";
 
@@ -96,7 +96,7 @@ const 쿠팡크롤링한거_파트너스링크_저장하고_카카오뷰에_저�
             "#root > div > div > div.workspace-container > div > div > div.affiliate-page > div > div > div.ant-spin-nested-loading.page-spin-container > div > div > div > div > div > div > div > div:nth-child(1) > div > div > div > div > span > input"
           )
         )
-        .sendKeys(상품명);
+        .sendKeys(encodeURIComponent(상품명));
 
       await driver
         .findElement(
@@ -112,6 +112,11 @@ const 쿠팡크롤링한거_파트너스링크_저장하고_카카오뷰에_저�
       const 찾은_검색결과리스트 = await driver.findElements(
         By.className("product-item")
       );
+
+      if (찾은_검색결과리스트.length === 0) {
+        console.log("쿠팡파트너스에는 해당 상품이 없습니다.");
+        continue;
+      }
 
       // ! 쿠팡파트너스_상품에_마우스올리고_링크생성버튼누르고_링크받아오기
       const 쿠팡파트너스_상품에_마우스올리고_링크생성버튼누르고_링크받아오기 =

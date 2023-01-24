@@ -118,14 +118,14 @@ export const 카카오뷰_보드_정보입력하고_발행하기 = async (props:
       driver,
       selector: "#boardTitle",
     })
-  ).sendKeys(`💝 ${보드제목}`);
+  ).sendKeys(`${보드제목}`);
   (
     await awaitFindElement({
       driver,
       selector: "#boardCmt",
     })
   ).sendKeys(
-    `${보드설명}\n\n* 이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.`
+    `${보드설명}\n\n> 현재 가장 많이 팔리고 있는 제품이에요.\n\n \n* 이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.`
   );
 
   (

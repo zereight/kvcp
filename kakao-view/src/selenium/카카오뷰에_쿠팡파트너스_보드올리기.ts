@@ -34,7 +34,7 @@ const 내_채널_및_시간대: Record<typeof 내_채널들[number], keyof typeo
 } as const;
 
 //! 발행하려는 채널명
-const targetChannel: typeof 내_채널들[number] = "쇼핑혁";
+const targetChannel: typeof 내_채널들[number] = "리빙피쉬(쇼핑)";
 
 const 등록하려는_날짜 = 25;
 
