@@ -9,7 +9,7 @@ import {
 } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { Time } from "./constants/Time.js";
-import { awaitFindElement } from "./util/awaitfindElement.js";
+import { awaitFindElement } from "./util/awaitFindElement.js";
 
 import {
   카카오뷰_QR로그인하기,
