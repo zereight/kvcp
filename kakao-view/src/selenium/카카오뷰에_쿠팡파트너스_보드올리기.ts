@@ -12,31 +12,41 @@ import { Time } from "./constants/Time.js";
 import { awaitFindElement } from "./util/awaitFindElement.js";
 
 import {
-  카카오뷰_QR로그인하기,
+  카카오뷰_로그인하기,
   카카오뷰_보드_정보입력하고_발행하기,
   카카오뷰_채널선택하여_접속하기,
 } from "./util/카카오뷰_보드올리기.js";
 
-import 쿠팡파트너스_물품들 from "./카카오뷰에_저장할_상품정보.json" assert { type: "json" };
+import 쿠팡파트너스_물품들 from "./쿠팡_파트너스_크롤링한거.json" assert { type: "json" };
 
 const 내_채널들 = [
-  "리빙피쉬(쇼핑)",
-  "쇼핑의고수",
-  "쇼핑장인",
-  "쇼핑혁",
+  "리빙피쉬(쇼핑)", // 본계정
+  "쇼핑의고수", // 본계정
+  "쇼핑장인", // 본계정
+  "쇼핑혁", // 본계정
+  "쇼핑은 진심이다", // 본계정
+  "내가바로 김쇼핑", // 부계정(simple)
 ] as const;
 
 const 내_채널_및_시간대: Record<typeof 내_채널들[number], keyof typeof Time> = {
+  // 아침
   "리빙피쉬(쇼핑)": "아침",
+  "쇼핑은 진심이다": "아침",
+  // 점심
   쇼핑의고수: "점심",
+  "내가바로 김쇼핑": "점심",
+
+  // 저녁
   쇼핑장인: "저녁",
+
+  // 밤
   쇼핑혁: "밤",
 } as const;
 
 //! 발행하려는 채널명
-const targetChannel: typeof 내_채널들[number] = "리빙피쉬(쇼핑)";
+const targetChannel: typeof 내_채널들[number] = "내가바로 김쇼핑";
 
-const 등록하려는_날짜 = 25;
+const 등록하려는_날짜 = 27;
 
 // ! 실행하기
 const 실행하기 = async () => {
@@ -58,10 +68,10 @@ const 실행하기 = async () => {
   let driver = await chrome.build();
 
   try {
-    await 카카오뷰_QR로그인하기(driver);
+    await 카카오뷰_로그인하기(driver);
 
     // QR코드 로그인을 기다림
-    await driver.sleep(10000);
+    await driver.sleep(20000);
 
     await 카카오뷰_채널선택하여_접속하기({
       targetChannel,

@@ -10,7 +10,7 @@ import {
 import { Time } from "../constants/Time";
 import { awaitFindElement } from "./awaitfindElement.js";
 
-export const 카카오뷰_QR로그인하기 = async (driver: WebDriver) => {
+export const 카카오뷰_로그인하기 = async (driver: WebDriver) => {
   await driver.get("https://creators.kakao.com/");
 
   // 로그인 버튼 클릭
@@ -18,15 +18,6 @@ export const 카카오뷰_QR로그인하기 = async (driver: WebDriver) => {
     await awaitFindElement({
       driver,
       selector: ".link_login",
-    })
-  ).click();
-
-  // QR코드 보기 버튼 클릭
-  (
-    await awaitFindElement({
-      driver,
-      selector:
-        "#mainContent > div > div > form > div.confirm_btn > button:nth-child(3)",
     })
   ).click();
 

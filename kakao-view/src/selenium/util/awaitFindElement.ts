@@ -35,3 +35,18 @@ export const awaitFindElement = async (props: {
     return await driver.findElement(By.css(selector));
   }
 };
+
+export const awaitFindElements = async (props: {
+  driver: WebDriver;
+  selector: string;
+  delay?: number;
+  target?: WebElement;
+}) => {
+  const { driver, selector, delay = 5000, target } = props;
+
+  if (target) {
+    return await target.findElements(By.css(selector));
+  } else {
+    return await driver.findElements(By.css(selector));
+  }
+};
