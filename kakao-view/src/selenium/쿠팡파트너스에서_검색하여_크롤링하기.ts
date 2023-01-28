@@ -16,8 +16,10 @@ import {
 import 쿠팡파트너스계정 from "./쿠팡_파트너스_계정.private.json" assert { type: "json" };
 import fs from "fs";
 
-const 검색어 = "바람막이";
-const 검색결과중_몇번째_상품부터_크롤링할지 = 10;
+const 검색어 = "세탁건조기";
+const 검색결과중_몇번째_상품부터_크롤링할지 = 12;
+
+const 로켓배송_선택하기 = true;
 
 const 쿠팡파트너스페이지 = "https://partners.coupang.com/#affiliate/ws";
 
@@ -69,6 +71,20 @@ const 쿠팡파트너스_검색하기 = async (driver: WebDriver) => {
   await 쿠팡파트너스_메인_검색어검색버튼.click();
 
   await driver.sleep(2000);
+
+  if (로켓배송_선택하기) {
+    // 검색결과에 대해서 로켓배송만보기
+
+    const 로켓배송_버튼 = await awaitFindElement({
+      driver,
+      selector:
+        "#root > div > div > div.workspace-container > div > div > div.affiliate-page > div > div > div.ant-spin-nested-loading.page-spin-container > div > div > div > div > div > div > section.section-product-list > div > div.search-result-header > div > div.ant-col.delivery-filter.ant-col-xs-24.ant-col-sm-12.ant-col-md-12.ant-col-lg-12 > label:nth-child(1)",
+    });
+
+    await 로켓배송_버튼.click();
+
+    await driver.sleep(2000);
+  }
 };
 
 const 검색어결과_크롤링하기 = async (driver: WebDriver) => {

@@ -20,33 +20,48 @@ import {
 import 쿠팡파트너스_물품들 from "./쿠팡_파트너스_크롤링한거.json" assert { type: "json" };
 
 const 내_채널들 = [
+  // 본계정
   "리빙피쉬(쇼핑)", // 본계정
   "쇼핑의고수", // 본계정
   "쇼핑장인", // 본계정
   "쇼핑혁", // 본계정
   "쇼핑은 진심이다", // 본계정
-  "내가바로 김쇼핑", // 부계정(simple)
+
+  // 부계정(simple)
+  "내가바로 김쇼핑",
+  "월급킬러",
+  "언니들 이거봐바",
+  "내 장바구니",
+  "쇼비욕구",
 ] as const;
 
 const 내_채널_및_시간대: Record<typeof 내_채널들[number], keyof typeof Time> = {
   // 아침
   "리빙피쉬(쇼핑)": "아침",
   "쇼핑은 진심이다": "아침",
+  "내 장바구니": "아침",
   // 점심
   쇼핑의고수: "점심",
   "내가바로 김쇼핑": "점심",
-
+  쇼비욕구: "점심",
   // 저녁
   쇼핑장인: "저녁",
-
+  월급킬러: "저녁",
   // 밤
   쇼핑혁: "밤",
+  "언니들 이거봐바": "밤",
 } as const;
 
 //! 발행하려는 채널명
-const targetChannel: typeof 내_채널들[number] = "내가바로 김쇼핑";
+const targetChannels: typeof 내_채널들[number][] = [
+  "내가바로 김쇼핑",
+  "월급킬러",
+  "언니들 이거봐바",
+  "내 장바구니",
+  "쇼비욕구",
+];
 
-const 등록하려는_날짜 = 27;
+const 등록하려는_날짜 = 28;
 
 // ! 실행하기
 const 실행하기 = async () => {
@@ -73,47 +88,51 @@ const 실행하기 = async () => {
     // QR코드 로그인을 기다림
     await driver.sleep(20000);
 
-    await 카카오뷰_채널선택하여_접속하기({
-      targetChannel,
-      driver,
-    });
+    for (const targetChannel of targetChannels) {
+      await driver.sleep(1000);
 
-    await driver.sleep(1000);
-
-    for (const 물품 of 쿠팡파트너스_물품들.slice(0, 10)) {
-      await driver.sleep(200);
-
-      // 보드탭 클릭
-      (
-        await awaitFindElement({
-          driver,
-          selector:
-            "#root > div.container-doc > main > section > aside > nav > ul > li:nth-child(2) > a > span",
-        })
-      ).click();
-
-      // 새 보드 발행 클릭
-      (
-        await awaitFindElement({
-          driver,
-          selector: "#mainContent > div.wrap_tit > div > a > span",
-        })
-      ).click();
-
-      const { partnersLink, title } = 물품;
-
-      await 카카오뷰_보드_정보입력하고_발행하기({
+      await 카카오뷰_채널선택하여_접속하기({
+        targetChannel,
         driver,
-        보드제목: title,
-        보드설명: title,
-        보드유형: 3,
-        링크: partnersLink,
-        카테고리1: "쇼핑 정보",
-        카테고리2: "리빙",
-        예약발행날짜: 등록하려는_날짜,
-        예약발행시간: Time[내_채널_및_시간대[targetChannel]].시,
-        예약발행분: Time[내_채널_및_시간대[targetChannel]].분,
       });
+
+      await driver.sleep(1000);
+
+      for (const 물품 of 쿠팡파트너스_물품들.slice(0, 10)) {
+        await driver.sleep(200);
+
+        // 보드탭 클릭
+        (
+          await awaitFindElement({
+            driver,
+            selector:
+              "#root > div.container-doc > main > section > aside > nav > ul > li:nth-child(2) > a > span",
+          })
+        ).click();
+
+        // 새 보드 발행 클릭
+        (
+          await awaitFindElement({
+            driver,
+            selector: "#mainContent > div.wrap_tit > div > a > span",
+          })
+        ).click();
+
+        const { partnersLink, title } = 물품;
+
+        await 카카오뷰_보드_정보입력하고_발행하기({
+          driver,
+          보드제목: title,
+          보드설명: title,
+          보드유형: 3,
+          링크: partnersLink,
+          카테고리1: "쇼핑 정보",
+          카테고리2: "리빙",
+          예약발행날짜: 등록하려는_날짜,
+          예약발행시간: Time[내_채널_및_시간대[targetChannel]].시,
+          예약발행분: Time[내_채널_및_시간대[targetChannel]].분,
+        });
+      }
     }
   } catch (error) {
     console.error(error);
