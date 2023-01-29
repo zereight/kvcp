@@ -104,12 +104,10 @@ export const 카카오뷰_보드_정보입력하고_발행하기 = async (props:
   } = props;
 
   if (보드제목.length > 36) {
-    alert("보드제목이 36자를 넘었습니다.");
-    return;
+    throw new Error("보드제목이 36자를 넘었습니다.");
   }
   if (보드설명.length > 300) {
-    alert("보드설명이 300자를 넘었습니다.");
-    return;
+    throw new Error("보드설명이 300자를 넘었습니다.");
   }
 
   // 기본 정보 입력
