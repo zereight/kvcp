@@ -103,6 +103,15 @@ export const 카카오뷰_보드_정보입력하고_발행하기 = async (props:
     예약발행분,
   } = props;
 
+  if (보드제목.length > 36) {
+    alert("보드제목이 36자를 넘었습니다.");
+    return;
+  }
+  if (보드설명.length > 300) {
+    alert("보드설명이 300자를 넘었습니다.");
+    return;
+  }
+
   // 기본 정보 입력
   (
     await awaitFindElement({
@@ -181,9 +190,8 @@ export const 카카오뷰_보드_정보입력하고_발행하기 = async (props:
   for (const 카테고리 of 카테고리들) {
     const 카테고리Text = await 카테고리.getText();
     if (카테고리Text === 카테고리1 || 카테고리Text === 카테고리2) {
+      console.log(카테고리Text, "카테고리 선택");
       await 카테고리.click();
-
-      break;
     }
   }
 

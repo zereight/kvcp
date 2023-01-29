@@ -18,8 +18,8 @@ import {
 } from "../util/awaitFindElement.js";
 import { CrawledProducts } from "../types/CrawledProducts";
 
-const 검색어 = "세탁건조기";
-const 검색결과중_몇번째_상품부터_크롤링할지 = 12;
+const 검색어 = "로봇청소기";
+const 검색결과중_몇번째_상품부터_크롤링할지 = 24;
 
 const 로켓배송_선택하기 = true;
 
