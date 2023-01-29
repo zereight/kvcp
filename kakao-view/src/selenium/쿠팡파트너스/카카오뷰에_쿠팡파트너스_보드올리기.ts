@@ -8,16 +8,16 @@ import {
   WebElement,
 } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { Time } from "./constants/Time.js";
-import { awaitFindElement } from "./util/awaitFindElement.js";
+import { Time } from "../constants/Time.js";
+import { awaitFindElement } from "../util/awaitFindElement.js";
 
 import {
   카카오뷰_로그인하기,
   카카오뷰_보드_정보입력하고_발행하기,
   카카오뷰_채널선택하여_접속하기,
-} from "./util/카카오뷰_보드올리기.js";
+} from "../util/카카오뷰_보드올리기.js";
 
-import 쿠팡파트너스_물품들 from "./쿠팡_파트너스_크롤링한거.json" assert { type: "json" };
+import 쿠팡파트너스_물품들 from "./결과물/쿠팡_파트너스_크롤링한거.json" assert { type: "json" };
 
 const 내_채널들 = [
   // 본계정

@@ -8,13 +8,15 @@ import {
   WebElement,
 } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { CrawledProducts } from "./types/CrawledProducts";
+
+import 쿠팡파트너스계정 from "../개인정보/쿠팡_파트너스_계정.private.json" assert { type: "json" };
+
+import fs from "fs";
 import {
   awaitFindElement,
   awaitFindElements,
-} from "./util/awaitFindElement.js";
-import 쿠팡파트너스계정 from "./쿠팡_파트너스_계정.private.json" assert { type: "json" };
-import fs from "fs";
+} from "../util/awaitFindElement.js";
+import { CrawledProducts } from "../types/CrawledProducts";
 
 const 검색어 = "세탁건조기";
 const 검색결과중_몇번째_상품부터_크롤링할지 = 12;
@@ -210,7 +212,7 @@ const 실행하기 = async () => {
     await driver.sleep(1000);
 
     fs.writeFile(
-      "./src/selenium/쿠팡_파트너스_크롤링한거.json",
+      "./src/selenium/쿠팡파트너스/결과물/쿠팡_파트너스_크롤링한거.json",
       JSON.stringify(크롤링결과),
       (err) => {
         if (err) {
