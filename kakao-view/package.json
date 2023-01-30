@@ -10,7 +10,10 @@
     "cy:run:gui": "npx cypress open",
     "dev": "nodemon --exec node --loader ts-node/esm --project tsconfig ./src/selenium/test.ts",
     "쿠팡파트너스에서_검색하여_크롤링하기": "node --loader ts-node/esm ./src/selenium/쿠팡파트너스/쿠팡파트너스에서_검색하여_크롤링하기.ts",
+    "쿠팡파트너스에서_검색하여_크롤링하기v2": "node --loader ts-node/esm ./src/selenium/쿠팡파트너스/쿠팡파트너스에서_검색하여_크롤링하기v2.ts",
     "카카오뷰에_쿠팡파트너스_보드올리기": "node --loader ts-node/esm ./src/selenium/쿠팡파트너스/카카오뷰에_쿠팡파트너스_보드올리기.ts",
+    "카카오뷰에_쿠팡파트너스_보드올리기v2": "node --loader ts-node/esm ./src/selenium/쿠팡파트너스/카카오뷰에_쿠팡파트너스_보드올리기v2.ts",
+    "티스토리에_랜딩페이지올리기": "node --loader ts-node/esm ./src/selenium/쿠팡파트너스/티스토리_글_올리기.ts",
     "최초설치": "npm install"
   },
   "dependencies": {
