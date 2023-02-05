@@ -27,9 +27,9 @@ SENDER_PASSWORD=email_info["googleEmailSecret"]  # 발급 받은 16자리 앱 �
 # 받는이 정보 입력
 RECEIVER_EMAIL=email_info["kakaoEmail"]    # 받는 메일 주소(본인 카카오 이메일 주소 입력)
 
-def send_email(title, content):
-    msg = MIMEText(title)
-    msg['Subject'] = content
+def send_email(content, title):
+    msg = MIMEText(content)
+    msg['Subject'] = title
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_SSL_PORT, context=context) as server:
         server.login(SENDER_EMAIL, SENDER_PASSWORD)
