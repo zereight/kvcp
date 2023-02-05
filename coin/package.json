@@ -54,7 +54,8 @@
     "clean:rsi:nohup": "rm -rf nohup.out",
     "show:pump:nohup": "tail -f nohup2.out",
     "clean:pump:nohup": "rm -rf nohup2.out",
-    "prestart:rsi": "yarn clean:background",
+    "prestart:rsi": "yarn clean:rsi:nohup",
+    "prestart:pump": "yarn clean:pump:nohup",
     "kill": "kill -9"
   }
 }
