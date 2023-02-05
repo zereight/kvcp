@@ -64,7 +64,7 @@ const targetChannels: typeof 내_채널들[number][] = [
   "쇼비욕구",
 ];
 
-const 등록하려는_날짜 = 31;
+const 등록하려는_날짜 = 1;
 
 const 로그인을_몇초_기다릴까요 = 20;
 

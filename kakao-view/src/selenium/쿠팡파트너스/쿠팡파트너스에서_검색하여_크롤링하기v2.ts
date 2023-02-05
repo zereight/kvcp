@@ -19,8 +19,8 @@ import {
 import { CrawledProduct } from "../types/CrawledProduct";
 import 티스토리_html템플릿만들기 from "../util/티스토리_html템플릿만들기.js";
 
-const 검색어 = "닭가슴살";
-const 검색결과중_몇번째_상품부터_크롤링할지 = 2;
+const 검색어 = "탈모샴푸";
+const 검색결과중_몇번째_상품부터_크롤링할지 = 4;
 
 const 로켓배송_선택하기 = true;
 

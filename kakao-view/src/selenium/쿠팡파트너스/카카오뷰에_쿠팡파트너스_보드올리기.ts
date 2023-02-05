@@ -119,12 +119,12 @@ const 실행하기 = async () => {
           })
         ).click();
 
-        const { partnersLink, title } = 물품;
+        const { partnersLink, name } = 물품;
 
         await 카카오뷰_보드_정보입력하고_발행하기({
           driver,
-          보드제목: title,
-          보드설명: title,
+          보드제목: name,
+          보드설명: name,
           보드유형: 3,
           링크: partnersLink,
           카테고리1: "쇼핑 정보",
