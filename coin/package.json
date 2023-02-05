@@ -50,8 +50,10 @@
     "stop:rsi": "ps -ef | grep upbit_rsi_based_invest",
     "start:pump": "nohup python3 upbit_alt_pump_run.py > nohup2.out &",
     "stop:pump": "ps -ef | grep upbit_alt_pump_run",
-    "show:background": "tail -f nohup.out",
-    "clean:background": "rm -rf nohup.out",
+    "show:rsi:nohup": "tail -f nohup.out",
+    "clean:rsi:nohup": "rm -rf nohup.out",
+    "show:pump:nohup": "tail -f nohup2.out",
+    "clean:pump:nohup": "rm -rf nohup2.out",
     "prestart:rsi": "yarn clean:background",
     "kill": "kill -9"
   }
