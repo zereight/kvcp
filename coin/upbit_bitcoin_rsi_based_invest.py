@@ -34,6 +34,9 @@ sec = 0 # 시작 값
 # 지금 구매한 상태인가? (짧은시간내에 많이 구매되는 현상 방지)
 is_already_bought = False
 
+down_bound = 19
+up_bound = 56
+
 
 while sec < (loop_time * 60):
     if (sec == 60 * 10):
@@ -90,8 +93,8 @@ while sec < (loop_time * 60):
 
     ## 보유 원화가 10000원 이상이면 들여 쓴 코드 실행
     if now_krw > 10000:
-        ## RSI 지표가 19% 이하이면 들여 쓴 코드 실행
-        if RSI_value_number <= 19:
+        ## RSI 지표가 down_bound% 이하이면 들여 쓴 코드 실행
+        if RSI_value_number <= down_bound:
             ################################################################################
             #################### RSI 지표가 20% 이하 과매도 상태 시장가 매수 주문 실행 ####################
             ################################################################################
@@ -116,14 +119,14 @@ while sec < (loop_time * 60):
                                                           .buy_market_order(market_code, order_amount), orient='index').T
                 is_already_bought = True
                 
-                print('RSI 지표가 19% 이하 과매도 상태 시장가 매수')
+                print(f'RSI 지표가 {down_bound}% 이하 과매도 상태 시장가 매수')
             
-        ## RSI 지표가 70% 이상이면 들여 쓴 코드 실행
-        elif RSI_value_number >= 70:
+        ## RSI 지표가 up_bound% 이상이면 들여 쓴 코드 실행
+        elif RSI_value_number >= up_bound:
             ## 종목 보유량이 있는 경우 들여 쓴 코드 실행
             if pyupbit.Upbit(A_key, S_key).get_balance(market_code) > 0:
                 ################################################################################
-                ########## RSI 지표가 70% 이상 과매수 상태 시장가(수익화) 매도 주문 실행 ##########
+                ########## RSI 지표가 up_bound% 이상 보통과매수 상태 시장가(수익화) 매도 주문 실행 ##########
                 ################################################################################
                 # 시장가 매도
                 order_quantity = pyupbit.Upbit(A_key, S_key).get_balance(market_code)
@@ -135,24 +138,24 @@ while sec < (loop_time * 60):
                 ## API로 업비트에서 시장가 매도 진행
                 sell_market_order_data = pd.DataFrame.from_dict(
                     pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
-                print('RSI 지표가 70% 이상 과매수 상태 시장가(수익화) 매도')
+                print(f'RSI 지표가 {up_bound}% 이상 과매수 상태 시장가(수익화) 매도')
             ## 종목 보유량이 없는 경우 들여 쓴 코드 실행
             else:
-                print('RSI 지표가 70% 이상 과매수 상태지만 매도할 종목 보유량 없음')
-        ## RSI 지표가 30% 이상 70% 이하이면 들여 쓴 코드 실행
+                print(f'RSI 지표가 {up_bound}% 이상 과매수 상태지만 매도할 종목 보유량 없음')
+        ## RSI 지표가 down_bound% 초과 up_bound% 미만이면 들여 쓴 코드 실행
         else:
-            print('RSI 19%초과 70%미만 구간으로 대기')
+            print('대기')
     ## 보유 원화가 10000원 미만이면 들여 쓴 코드 실행
     else:
         ## 종목 보유량이 있는 경우 들여 쓴 코드 실행
         if pyupbit.Upbit(A_key, S_key).get_balance(market_code) > 0:
             ## RSI 지표가 20% 이하이면 들여 쓴 코드 실행
-            if RSI_value_number <= 19:
-                print('RSI 지표가 19% 이하 과매도 상태지만 매수할 원화 부족')
-            ## RSI 지표가 70% 이상이면 들여 쓴 코드 실행
-            elif RSI_value_number >= 70:
+            if RSI_value_number <= down_bound:
+                print(f'RSI 지표가 {down_bound}% 이하 과매도 상태지만 매수할 원화 부족')
+            ## RSI 지표가 up_bound% 이상이면 들여 쓴 코드 실행
+            elif RSI_value_number >= up_bound:
                 ################################################################################
-                ########## RSI 지표가 70% 이상 과매수 상태 시장가(수익화) 매도 주문 실행 ##########
+                ########## RSI 지표가 up_bound% 이상 과매수 상태 시장가(수익화) 매도 주문 실행 ##########
                 ################################################################################
                 # 시장가 매도
                 order_quantity = pyupbit.Upbit(A_key, S_key).get_balance(market_code)
@@ -164,10 +167,10 @@ while sec < (loop_time * 60):
                 ## API로 업비트에서 시장가 매도 진행
                 sell_market_order_data = pd.DataFrame.from_dict(
                     pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
-                print('RSI 지표가 70% 이상 과매수 상태 시장가 매도')
-            ## RSI 지표가 30이상 70이하이면 들여 쓴 코드 실행
+                print(f'RSI 지표가 {up_bound}% 이상 과매수 상태 시장가 매도')
+            ## RSI 지표가 down_bound이상 up_bound이하이면 들여 쓴 코드 실행
             else:
-                print('RSI 19초과 70미만 구간으로 대기')
+                print('대기')
         ## 원화도 부족하고 종목 보유량도 없음
         else:
             print('!!! 원화 입금 필요 !!! 원화도 부족하고 종목 보유량도 없음')
