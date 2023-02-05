@@ -46,9 +46,9 @@
   "scripts": {
     "start": "webpack serve",
     "build": "webpack",
-    "start:rsi": "nohup python3 upbit_rsi_based_invest.py &",
+    "start:rsi": "nohup python3 upbit_rsi_based_invest.py > nohup.out &",
     "stop:rsi": "ps -ef | grep upbit_rsi_based_invest",
-    "start:pump": "nohup python3 upbit_alt_pump_run.py &",
+    "start:pump": "nohup python3 upbit_alt_pump_run.py > nohup2.out &",
     "stop:pump": "ps -ef | grep upbit_alt_pump_run",
     "show:background": "tail -f nohup.out",
     "clean:background": "rm -rf nohup.out",
