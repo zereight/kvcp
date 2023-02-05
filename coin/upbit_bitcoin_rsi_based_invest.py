@@ -3,6 +3,7 @@
 import requests, time, jwt, uuid, pyupbit
 import pandas as pd
 import numpy as np
+from sendMail import send_email
 import json
 f = open("업비트정보.private.json", "r")
 
@@ -64,7 +65,7 @@ while sec < (loop_time * 60):
                                                         jwt.encode({'access_key': A_key,
                                                                     'nonce': str(uuid.uuid4())}, S_key))}).json())
     ## 보유 원화
-    now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][1])
+    now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'].tail())
 
     ####################################################################################################
     ######################################## RSI 지표 구하기  ########################################
@@ -118,8 +119,8 @@ while sec < (loop_time * 60):
                 buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key)
                                                           .buy_market_order(market_code, order_amount), orient='index').T
                 is_already_bought = True
-                
-                print(f'RSI 지표가 {down_bound}% 이하 과매도 상태 시장가 매수')
+                send_email("매수했어요", f'RSI 지표가 {down_bound}% 이하 과매도 상태 시장가 매수 ' + datetime.datetime.now().strftime('%Y-%m-%d %H시 %M분'))
+                print(f'RSI 지표가 {down_bound}% 이하 과매도 상태 시장가 매수 ' + datetime.datetime.now().strftime('%Y-%m-%d %H시 %M분'))
             
         ## RSI 지표가 up_bound% 이상이면 들여 쓴 코드 실행
         elif RSI_value_number >= up_bound:
@@ -138,9 +139,12 @@ while sec < (loop_time * 60):
                 ## API로 업비트에서 시장가 매도 진행
                 sell_market_order_data = pd.DataFrame.from_dict(
                     pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
+                
+                send_email("매도했어요", f'RSI 지표가 {up_bound}% 이상 과매수 상태 시장가(수익화) 매도 ' + datetime.datetime.now().strftime('%Y-%m-%d %H시 %M분'))
                 print(f'RSI 지표가 {up_bound}% 이상 과매수 상태 시장가(수익화) 매도')
             ## 종목 보유량이 없는 경우 들여 쓴 코드 실행
             else:
+                send_email("매도못했어요", f'RSI 지표가 {up_bound}% 이상 과매수 상태지만 매도할 종목 보유량 없음 ' + datetime.datetime.now().strftime('%Y-%m-%d %H시 %M분'))
                 print(f'RSI 지표가 {up_bound}% 이상 과매수 상태지만 매도할 종목 보유량 없음')
         ## RSI 지표가 down_bound% 초과 up_bound% 미만이면 들여 쓴 코드 실행
         else:
@@ -151,6 +155,7 @@ while sec < (loop_time * 60):
         if pyupbit.Upbit(A_key, S_key).get_balance(market_code) > 0:
             ## RSI 지표가 20% 이하이면 들여 쓴 코드 실행
             if RSI_value_number <= down_bound:
+                send_email("매수못했어요", f'RSI 지표가 {down_bound}% 이하 과매도 상태지만 매수할 원화 부족 ' + datetime.datetime.now().strftime('%Y-%m-%d %H시 %M분'))
                 print(f'RSI 지표가 {down_bound}% 이하 과매도 상태지만 매수할 원화 부족')
             ## RSI 지표가 up_bound% 이상이면 들여 쓴 코드 실행
             elif RSI_value_number >= up_bound:
@@ -167,12 +172,15 @@ while sec < (loop_time * 60):
                 ## API로 업비트에서 시장가 매도 진행
                 sell_market_order_data = pd.DataFrame.from_dict(
                     pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
+                
+                send_email("매도했어요", f'RSI 지표가 {up_bound}% 이상 과매수 상태 시장가 매도 ' + datetime.datetime.now().strftime('%Y-%m-%d %H시 %M분'))
                 print(f'RSI 지표가 {up_bound}% 이상 과매수 상태 시장가 매도')
             ## RSI 지표가 down_bound이상 up_bound이하이면 들여 쓴 코드 실행
             else:
                 print('대기')
         ## 원화도 부족하고 종목 보유량도 없음
         else:
+            send_email("원화입금필요!", '!!! 원화 입금 필요 !!! 원화도 부족하고 종목 보유량도 없음 ' + datetime.datetime.now().strftime('%Y-%m-%d %H시 %M분'))
             print('!!! 원화 입금 필요 !!! 원화도 부족하고 종목 보유량도 없음')
     time.sleep(cycle_time * 60)
     sec += (cycle_time * 60)

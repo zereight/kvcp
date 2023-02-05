@@ -45,6 +45,9 @@
   },
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack"
+    "build": "webpack",
+    "start:rsi": "nohup python3 upbit_bitcoin_rsi_based_invest.py",
+    "stop:rsi": "ps -ef | grep upbit_bitcoin_rsi_based_invest",
+    "show:background": "tail -f nohup.out"
   }
 }
