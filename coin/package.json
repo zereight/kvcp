@@ -49,6 +49,8 @@
     "start:rsi": "nohup python3 upbit_rsi_based_invest.py &",
     "stop:rsi": "ps -ef | grep upbit_rsi_based_invest",
     "show:background": "tail -f nohup.out",
-    "clean:background": "rm -rf nohup.out"
+    "clean:background": "rm -rf nohup.out",
+    "prestart:rsi": "yarn clean:background",
+    "kill": "kill -9"
   }
 }
