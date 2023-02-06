@@ -73,14 +73,14 @@ def init_yesterday_volume():
     ## "current_price_rank"를 "save_path" 경로에 'upbit_trade_price_rank_오늘년월일_23'이라는 엑셀파일로 저장
     current_price_rank.to_excel(save_path + 'upbit_trade_price_rank_' + datetime.datetime.now().strftime('%Y%m%d') + '_23.xlsx', index=False)
     print(save_path + 'upbit_trade_price_rank_' + datetime.datetime.now().strftime('%Y%m%d') + '_23.xlsx 저장 완료')
-    send_mail("23시가 되어 init_yesterday_volume를 완료했습니다.", "init_yesterday_volume 완료")
+    send_email("23시가 되어 init_yesterday_volume를 완료했습니다.", "init_yesterday_volume 완료")
     # ==================================================
 
 main_sec = 0
 while(True):
     current_time = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
     if("23:00" in current_time):
-        send_mail("23시가 되어 init_yesterday_volume를 실행합니다.", "init_yesterday_volume 실행")
+        send_email("23시가 되어 init_yesterday_volume를 실행합니다.", "init_yesterday_volume 실행")
         init_yesterday_volume()
     time.sleep(60)
     main_sec += 60
