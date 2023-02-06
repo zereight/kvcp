@@ -26,7 +26,7 @@ S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 ## 몇 초 간격으로 매도 타이밍을 체크 할 것인지
 cycle_time = 1  # 1분 간격으로 체크
 ## 몇 시간 동안 매도 타이밍을 체크 할 것인지
-loop_time = 60 * 24  # 24시간 동안 체크
+loop_time = 60 * 24 * 100  # 100일 동안 체크
 # ==================================================
 
 sec = 0 # 시작 값
@@ -35,7 +35,7 @@ sec = 0 # 시작 값
 is_already_bought = False
 
 down_bound = 19
-up_bound = 56
+up_bound = 65
 
 
 while sec < (loop_time * 60):

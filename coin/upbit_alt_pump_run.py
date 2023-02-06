@@ -20,24 +20,29 @@ f.close()
 A_key = api_key["accessKey"]  # 본인 access_key 키로 변경
 S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 
-def get_high_volume_tickers():
-    result = []
-    for t in pyupbit.get_tickers(fiat='KRW'):
-        volumes = (t, pyupbit.get_ohlcv(ticker=t, count=1)['value'].values[0] )
-        result.append(volumes)
-        time.sleep(0.1)
-
-    result.sort(key=lambda x:x[1])
-        
-    return list(map(lambda x: x[0], result[:-20]))
-
-tickers = get_high_volume_tickers()
-        
 ## 몇 프로 이상 상승하면 수익화 할 것인지
 ascent = 5  # 5% 상승
 ## 몇 프로 이상 하락하면 손절 할 것인지
 downhill = 5  # 5% 하락
 
+def get_high_volume_tickers():
+    result = []
+    for t in pyupbit.get_tickers(fiat='KRW'):
+        data = {
+            "name": t,
+            # 1일 기준으로 거래량제일 높은거 가져옴
+            "volume": pyupbit.get_ohlcv(ticker=t, interval='day', count=1)['volume'].values[0]
+        }
+        result.append(data)
+        time.sleep(0.1)
+        
+    result.sort(key=lambda x:x["volume"])
+        
+    return list(map(lambda x: x["name"], result[:-20]))
+
+# 밤 12시마다 초기화하여 실행해주기
+tickers = get_high_volume_tickers()
+        
 while(1):
     for market_code in tickers:
         time.sleep(0.1)
@@ -60,16 +65,21 @@ while(1):
             time.sleep(60 * 5)
             continue
 
-        ## 1분전 대비 10%급등한지 검증
-        ohlcv_value = pyupbit.get_ohlcv(market_code, interval="minute1")
-        ohlcv_value['change'] = ohlcv_value['close'] - ohlcv_value['close'].shift(1)
-        ohlcv_value['change_rate'] = (ohlcv_value['close'] / ohlcv_value['close'].shift(1)) * 100
+        ## 현재 1분봉의 거래량이 최근 1분~30분의 거래량 평균보다 10배이상큰가?
+        ohlcv_value = pyupbit.get_ohlcv(market_code, interval="minute1", count=30)
+        current_volume = ohlcv_value[-1:]["volume"]
+        before_volume_mean = np.mean(ohlcv_value[-10:-1]["volume"])
+        
+        up_volume_rate = (current_volume / before_volume_mean).values[0]
+        
+        print(up_volume_rate)
+        
 
         # 지금 코인을 구매한 상태인지 체크한다.
         was_coin_bought = False
 
-        ## 10%이상 급등했을때
-        if ohlcv_value['change_rate'][-1] > 110:
+        ## 10배이상 급등했을때
+        if up_volume_rate >= 10:
             # 시장가 구매
             if round(now_krw * 0.2) >= 7000:
                 ## 주문 금액을 보유 원화의 20%로 지정
@@ -91,10 +101,11 @@ while(1):
                   str(round(float(specific_order['executed_volume'][0]), 5)) + '개 구매',"급등코인매수!")
             print(specific_order['market'][0] + '을 매수가 ' + str(buy_market_order_price) + '원에 ' +
                   str(round(float(specific_order['executed_volume'][0]), 5)) + '개 구매')
-
+            print(f"{market_code}은 10배이상 급등했습니다. {up_volume_rate}%변동")
+            
             was_coin_bought = True
         else:
-            print(f"{market_code}은 10%이상 급등하지 않았습니다. {ohlcv_value['change_rate'][-1]}%변동")
+            print(f"{market_code}은 10배이상 급등하지 않았습니다. {up_volume_rate}%변동")
 
         ## 지금 매수한 상태면 계속 매도하기 위해서 대기한다.
         while(was_coin_bought):
