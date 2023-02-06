@@ -20,8 +20,19 @@ f.close()
 A_key = api_key["accessKey"]  # 본인 access_key 키로 변경
 S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 
-tickers = pyupbit.get_tickers(fiat="KRW") # 유의종목포함했음
+def get_high_volume_tickers():
+    result = []
+    for t in pyupbit.get_tickers(fiat='KRW'):
+        volumes = (t, pyupbit.get_ohlcv(ticker=t, count=1)['value'].values[0] )
+        result.append(volumes)
+        time.sleep(0.1)
 
+    result.sort(key=lambda x:x[1])
+        
+    return list(map(lambda x: x[0], result[:-20]))
+
+tickers = get_high_volume_tickers()
+        
 ## 몇 프로 이상 상승하면 수익화 할 것인지
 ascent = 5  # 5% 상승
 ## 몇 프로 이상 하락하면 손절 할 것인지
