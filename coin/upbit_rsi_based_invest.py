@@ -39,8 +39,8 @@ up_bound = 65
 
 
 while sec < (loop_time * 60):
-    if (sec == 60 * 10):
-        # 10분이 지나면, 구매헀다는 플래그를 False로 만든다. (10분이면 중복구매해도 괜찮다고 가정함)
+    if (sec == 60 * 5):
+        # 5분이 지나면, 구매헀다는 플래그를 False로 만든다. (5분이면 중복구매해도 괜찮다고 가정함)
         is_already_bought = False
         
     if sec % 60 == 0:
