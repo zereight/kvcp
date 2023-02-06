@@ -48,14 +48,15 @@
     "build": "webpack",
     "start:pump": "nohup python3 upbit_alt_pump_run.py > nohup2.out &",
     "start:rsi": "nohup python3 upbit_rsi_based_invest.py > nohup.out &",
+    "start:yesterday": "nohup python3 init_yesterday_volume > nohup3.out &",
+    "start:today": "nohup python3 init_today_volume > nohup4.out &",
     "stop:rsi": "ps -ef | grep upbit_rsi_based_invest",
     "stop:pump": "ps -ef | grep upbit_alt_pump_run",
     "show:rsi:nohup": "tail -f nohup.out",
-    "show:pump:nohup": "tail -f nohup2.out",
-    "clean:rsi:nohup": "rm -rf nohup.out",
-    "clean:pump:nohup": "rm -rf nohup2.out",
-    "prestart:rsi": "yarn clean:rsi:nohup",
-    "prestart:pump": "yarn clean:pump:nohup",
+    "prestart:rsi": "rm -rf nohup.out",
+    "prestart:pump": "rm -rf nohup2.out",
+    "prestart:yesterday": "rm -rf nohup3.out",
+    "prestart:today": "rm -rf nohup4.out",
     "kill": "kill -9"
   }
 }

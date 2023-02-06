@@ -168,7 +168,8 @@ def init_today_volume():
             buy_market_order_price = (round(float(specific_order['price'][0]) / float(specific_order['executed_volume'][0]), 2))
             print(specific_order['market'][0] + '을 매수가 ' + str(buy_market_order_price) + '원에 ' +
                   str(round(float(specific_order['executed_volume'][0]), 2)) + '개 구매')
-
+            send_mail(specific_order['market'][0] + '을 매수가 ' + str(buy_market_order_price) + '원에 ' +
+                  str(round(float(specific_order['executed_volume'][0]), 2)) + '개 구매', "급등코인 매수")
             # ==================== 추가된 부분 ====================
             ######################################################################
             ############################## 매도 감시 ##############################
@@ -191,6 +192,7 @@ def init_today_volume():
                 if sec%60 == 0:
                     ## "sec" 값을 60으로 나눴을 때 몫을 분으로 출력
                     print(str(sec//60) + '분 경과')
+                    send_mail(str(sec//60) + '분 경과', "기다리는중")
                 ## 매수한 종목의 현재가와 앞서 구매한 가격의 차이를 구매한 가격으로 나누고 100을 곱하여 수익률을 구하고 "buy_market_price_ascent"로 지정
                 buy_market_price_ascent = (pyupbit.get_current_price(market_code)
                                            - buy_market_order_price)/buy_market_order_price*100
@@ -224,6 +226,7 @@ def init_today_volume():
                         sell_market_order_data = pd.DataFrame.from_dict(
                             pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
                         print(str(-downhill) + '% 하락하여 시장가 매도 손절')
+                        send_mail("매도", str(ascent) + '% 상승하여 시장가 매도 손절ㅠ')
                 ## 수익률이 5% 이상인 순간 들여 쓴 코드 실행
                 else:
                     ##########################################################################################
@@ -243,6 +246,7 @@ def init_today_volume():
                     sell_market_order_data = pd.DataFrame.from_dict(
                         pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
                     print(str(ascent) + '% 상승하여 시장가 매도 수익화')
+                    send_mail("매도", str(ascent) + '% 상승하여 시장가 매도 수익화')
             ################################################################################
             #################### 감시 시간 종료 시장가 매도 주문 실행 ####################
             ################################################################################
@@ -262,10 +266,12 @@ def init_today_volume():
             print(str(loop_time) + '시간 경과 매수가 대비 수익률' + str(buy_market_price_ascent) + '%로 시장가 매도')
         ## 보유 원화가 7000원 미만이면 들여 쓴 코드 실행
         else:
+            send_mail("원화없다", '보유 원화 7000원 미만으로 원화 입금 필요')
             print('보유 원화 7000원 미만으로 원화 입금 필요')
             time.sleep(5)  # 5초 대기
     ## "volume_rising_stocks"에 값이 없으면 들여 쓴 코드 실행
     else:
+        send_mail("없네", '금일 거래량 조건 맞는 종목 없음')
         print('금일 거래량 조건 맞는 종목 없음')
         time.sleep(5)  # 5초 대기
 
