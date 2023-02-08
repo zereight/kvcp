@@ -7,6 +7,7 @@ import datetime
 import json
 from pytz import timezone
 from sendMail import send_email
+import time
 
 ## 인증
 f = open("업비트정보.private.json", "r")
@@ -36,7 +37,7 @@ def 구매(market_code):
     send_email(specific_order['market'][0] + '을 매수가 ' + str(내가_구매한_가격) + '원에 ' +
       str(round(float(specific_order['executed_volume'][0]), 2)) + '개 구매', "9시 급등코인 매수")
     
-    구매했음 = True
+    구매했음 = False
     
 
 def 판매(market_code):
@@ -74,10 +75,10 @@ if __name__ == "__main__":
         dt = datetime.datetime.fromtimestamp(ts/1000)
         print(dt, code, f'{전일대비등락율}%')
         
-        # 오전 09:00시간에대 급등주 사버리기
-        if("09:00" in current_time):
-            # 7%뛴거 있으면 급등주
-            if(전일대비등락율 >= 7):
+        # 오전 09:0X시간에대 급등주 사버리기
+        if("09:0" in current_time):
+            # 3%뛴거 있으면 급등주
+            if(전일대비등락율 >= 3):
                 if(구매했음 == False):
                     구매(code)
                     pass
@@ -91,7 +92,9 @@ if __name__ == "__main__":
             
             if(수익률 > 손익률):
                 판매(code)
+                time.sleep(60 * 10) # 구매-판매 1사이클 돌았으니 10분기다리기 -> 내일 사기 위함
                 pass
             elif (-손절률 > 수익률):
                 판매(code)
+                time.sleep(60 * 10) # 구매-판매 1사이클 돌았으니 10분기다리기 -> 내일 사기 위함
                 pass
