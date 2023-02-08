@@ -34,7 +34,7 @@ sec = 0 # 시작 값
 # 지금 구매한 상태인가? (짧은시간내에 많이 구매되는 현상 방지)
 is_already_bought = False
 
-down_bound = 19
+down_bound = 25
 up_bound = 65
 
 
