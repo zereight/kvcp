@@ -3,11 +3,13 @@
 import multiprocessing as mp
 import pyupbit
 import pandas as pd
+import numpy as np
 import datetime
 import json
 from pytz import timezone
 from sendMail import send_email
 import time
+import requests, jwt, uuid
 
 ## 인증
 f = open("업비트정보.private.json", "r")
@@ -24,6 +26,11 @@ S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 수익률 = 0
 
 def 구매(market_code):
+     ## API로 업비트에서 내 계좌 조회
+    my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts",
+                                                        headers={"Authorization": 'Bearer {}'.format(
+                                                            jwt.encode({'access_key': A_key,
+                                                                        'nonce': str(uuid.uuid4())}, S_key))}).json())
     now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
     # 원화의 20%를 매수
     order_amount = round(now_krw * 0.2)
