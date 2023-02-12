@@ -18,14 +18,17 @@ f.close()
 A_key = api_key["accessKey"]  # 본인 access_key 키로 변경
 S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 
-손절률 = 5
-손익률 = 3
+손절률 = -2
+손익률 = 2
 
 구매했음 = False
-내가_구매한_가격 = 0
-수익률 = 0
+내가_구매했던_signed_change_rate = 0
+내가_구매했던_가격 = 0
+최대수집데이터량 = 100000
+급등코인 = ""
 
 def 구매(market_code):
+    구매했음 = True
      ## API로 업비트에서 내 계좌 조회
     my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts",
                                                         headers={"Authorization": 'Bearer {}'.format(
@@ -34,74 +37,81 @@ def 구매(market_code):
     now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
     # 원화의 20%를 매수
     order_amount = round(now_krw * 0.2)
-    buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key)
-                                               .buy_market_order(market_code, order_amount), orient='index').T
-    order_uuid = buy_market_order_data.uuid[0]
-    specific_order = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key).get_order(order_uuid), orient='index').T
-    내가_구매한_가격 = (round(float(specific_order['price'][0]) / float(specific_order['executed_volume'][0]), 2))
-    print(specific_order['market'][0] + '을 매수가 ' + str(내가_구매한_가격) + '원에 ' +
-      str(round(float(specific_order['executed_volume'][0]), 2)) + '개 구매')
-    send_email(specific_order['market'][0] + '을 매수가 ' + str(내가_구매한_가격) + '원에 ' +
-      str(round(float(specific_order['executed_volume'][0]), 2)) + '개 구매', "9시 급등코인 매수")
+    send_email(f'{market_code} 구매', "9시 펌핑코인 매수")
     
-    구매했음 = False
+    return buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key)
+                                               .buy_market_order(market_code, order_amount), orient='index').T
     
 
 def 판매(market_code):
-    order_quantity = pyupbit.Upbit(A_key, S_key).get_balance(market_code)
-    sell_market_order_data = pd.DataFrame.from_dict(
-    pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
-    print(str(ascent) + '% 상승하여 시장가 매도')
-    send_email("매도", str(ascent) + '% 상승하여 시장가 매도')
-    
     구매했음 = False
-    수익률 = 0
+    order_quantity = pyupbit.Upbit(A_key, S_key).get_balance(market_code)
+    send_email(f'{market_code} 판매', "9시 펌핑코인 판매")
+    return sell_market_order_data = pd.DataFrame.from_dict(
+        pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
+
+    
+
 
 ## 본 로직
 if __name__ == "__main__":
-    
-    krw_tickers = pyupbit.get_tickers(fiat="KRW")
-    queue = mp.Queue()
-    proc = mp.Process(
-        target=pyupbit.WebSocketClient,
-        args=('ticker', krw_tickers, queue),
-        daemon=True
-    )
-    proc.start()
 
     while True:
-        # 현재시간
-        current_time = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
+        현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
+        if("09:" in current_time):
+            # 9시가 되면, 원화마켓에 대해서 웹소켓 연결
+            krw_tickers = pyupbit.get_tickers(fiat="KRW")
+            queue = mp.Queue()
+            proc = mp.Process(
+                target=pyupbit.WebSocketClient,
+                args=('ticker', krw_tickers, queue),
+                daemon=True
+            )
+            proc.start()
 
-        data = queue.get()
-        code = data['code']
-        ts = data['trade_timestamp']
+            excel_data = pd.DataFrame()
+            count  = 0
+            
+            while True:
+                # 현재시간
+                current_time = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
 
-        전일대비등락율 = round(data['signed_change_rate'] * 100, 2)
-        
-        dt = datetime.datetime.fromtimestamp(ts/1000)
-        print(dt, code, f'{전일대비등락율}%')
-        
-        # 오전 09:0X시간에대 급등주 사버리기
-        if("09:0" in current_time):
-            # 3%뛴거 있으면 급등주
-            if(전일대비등락율 >= 3):
-                if(구매했음 == False):
-                    구매(code)
-                    pass
-        
-        # 구매상태면 이제 수익화를 위해서 기다리기
-        if(구매했음 == True):
-            
-            ## 매수한 종목의 현재가와 앞서 구매한 가격의 차이를 구매한 가격으로 나누고 100을 곱하여 수익률을 구하고 "buy_market_price_ascent"로 지정
-            수익률 = ((pyupbit.get_current_price(code)
-                                           - 내가_구매한_가격)/내가_구매한_가격) * 100
-            
-            if(수익률 > 손익률):
-                판매(code)
-                time.sleep(60 * 10) # 구매-판매 1사이클 돌았으니 10분기다리기 -> 내일 사기 위함
-                pass
-            elif (-손절률 > 수익률):
-                판매(code)
-                time.sleep(60 * 10) # 구매-판매 1사이클 돌았으니 10분기다리기 -> 내일 사기 위함
-                pass
+                count+=1
+                data = queue.get()
+
+                ts = data['trade_timestamp']
+                data["trade_timestamp"] = datetime.datetime.fromtimestamp(ts/1000)
+                data["signed_change_rate"] = data["signed_change_rate"] * 100
+                data["change_rate"] = data["change_rate"] * 100
+                
+                # 엑셀 데이터 수집
+                new_excel_data = pd.DataFrame(data, index=[0])
+                if len(df) == 0:
+                    excel_data = new_excel_data
+                else:
+                    excel_data = pd.concat([excel_data, new_excel_data])
+                if(count == 최대수집데이터량):
+                    현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d')
+                    df.to_excel(f'급등데이터_{현재날짜}.xlsx', index=False)
+                    break
+                
+                try:
+                    # 급등여부 판단
+                    # 200개의 데이터를 받았는데, 그중에 매수신호를 가장 많이 받은 녀석 구매
+                    if (count == 200):
+                        급등코인 = excel_data[excel_data["ask_bid"] == "BID"]["code"].value_counts(sort=True).index[0]
+                        내가_구매했던_signed_change_rate = data["signed_change_rate"]
+                        구매데이터 = 구매(급등코인)
+                        내가_구매했던_가격 = 구매데이터["price"]
+
+
+                    if(구매했음 == True):
+                        # 구매한뒤_등락율 = ((data["signed_change_rate"] / 내가_구매했던_signed_change_rate) * 100) - 100
+                        구매한뒤_등락율 = ((data["trade_price"] / 내가_구매했던_가격) * 100) - 100
+                        if(구매한뒤_등락율 > 손익률):
+                            판매(급등코인) # 익절
+                        elif(구매한뒤_등락율 < 손절률):
+                            판매(급등코인) # 손절
+                except Exception as error:
+                    print(error)
+                    
