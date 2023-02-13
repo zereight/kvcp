@@ -28,24 +28,30 @@ S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 급등코인 = ""
 
 def 구매(market_code):
-     ## API로 업비트에서 내 계좌 조회
-    my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts", headers={"Authorization": 'Bearer {}'.format(jwt.encode({'access_key': A_key,'nonce': str(uuid.uuid4())}, S_key))}).json())
-    now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
-    # 원화의 20%를 매수
-    order_amount = round(now_krw * 0.2)
-    send_email(f'{market_code} 구매', "9시 펌핑코인 매수")
-    
-    buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key).buy_market_order(market_code, order_amount), orient='index').T
+    try:
+        ## API로 업비트에서 내 계좌 조회
+        my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts", headers={"Authorization": 'Bearer {}'.format(jwt.encode({'access_key': A_key,'nonce': str(uuid.uuid4())}, S_key))}).json())
+        now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
+        # 원화의 20%를 매수
+        order_amount = round(now_krw * 0.2)
+        send_email(f'{market_code} 구매', "9시 펌핑코인 매수")
+        
+        buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key).buy_market_order(market_code, order_amount), orient='index').T
 
-    return buy_market_order_data
+        return buy_market_order_data
+    except Exception as e:
+        print(e)
 
 def 판매(market_code):
-    order_quantity = pyupbit.Upbit(A_key, S_key).get_balance(market_code)
-    send_email(f'{market_code} 판매', "9시 펌핑코인 판매")
-    sell_market_order_data = pd.DataFrame.from_dict(
-        pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
+    try:
+        order_quantity = pyupbit.Upbit(A_key, S_key).get_balance(market_code)
+        send_email(f'{market_code} 판매', "9시 펌핑코인 판매")
+        sell_market_order_data = pd.DataFrame.from_dict(
+            pyupbit.Upbit(A_key, S_key).sell_market_order(market_code, order_quantity), orient='index').T
 
-    return sell_market_order_data
+        return sell_market_order_data
+    except Exception as e:
+        print(e)
 
 
 ## 본 로직
