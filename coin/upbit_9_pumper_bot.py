@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     while True:
         현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
-        if("09:" in current_time):
+        if("09:" in 현재날짜):
             # 9시가 되면, 원화마켓에 대해서 웹소켓 연결
             krw_tickers = pyupbit.get_tickers(fiat="KRW")
             queue = mp.Queue()
@@ -76,7 +76,7 @@ if __name__ == "__main__":
             # 9시 웹소켓 로직 실ㅇ
             while True:
                 # 현재시간
-                current_time = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
+                현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
 
                 count+=1
                 data = queue.get()
