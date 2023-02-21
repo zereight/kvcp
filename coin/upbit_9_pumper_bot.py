@@ -33,8 +33,8 @@ def 구매(market_code):
     my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts", headers={"Authorization": 'Bearer {}'.format(jwt.encode({'access_key': A_key,'nonce': str(uuid.uuid4())}, S_key))}).json())
     print(my_exchange_account)
     now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
-    # 원화의 100%를 매수
-    order_amount = round(now_krw * 1)
+    # 원화의 50%를 매수, 보유원화의 75%를 넘으면 에러를 뱉는다는 소리가 있음
+    order_amount = round(now_krw * 0.5)
     send_email(f'{market_code} 구매', "9시 펌핑코인 매수")
 
     buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key).buy_market_order(market_code, order_amount), orient='index').T
@@ -53,9 +53,9 @@ def 판매(market_code):
 
 ## 본 로직
 if __name__ == "__main__":
-
-    # 로그인테스트
-    pyupbit.Upbit(A_key, S_key)
+    
+    # 로그인테스트, 에러가나면 오류있는거
+    pyupbit.Upbit(A_key, S_key).get_balance("KRW-BTC")
 
     while True:
         현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
@@ -112,13 +112,13 @@ if __name__ == "__main__":
                     내가_구매했던_가격 = int(구매데이터["price"][0])
 
 
-                    # 판매 감지 로직 실행
-                    if(구매했음 == True):
-                        # 구매한뒤_등락율 = ((data["signed_change_rate"] / 내가_구매했던_signed_change_rate) * 100) - 100
-                        구매한뒤_등락율 = ((data["trade_price"] / 내가_구매했던_가격) * 100) - 100
-                        if(구매한뒤_등락율 > 손익률):
-                            판매(급등코인) # 익절
-                            구매했음 = False
-                        elif(구매한뒤_등락율 < 손절률):
-                            판매(급등코인) # 손절
-                            구매했음 = False
+                # 판매 감지 로직 실행
+                if(구매했음 == True):
+                    # 구매한뒤_등락율 = ((data["signed_change_rate"] / 내가_구매했던_signed_change_rate) * 100) - 100
+                    구매한뒤_등락율 = ((data["trade_price"] / 내가_구매했던_가격) * 100) - 100
+                    if(구매한뒤_등락율 > 손익률):
+                        판매(급등코인) # 익절
+                        구매했음 = False
+                    elif(구매한뒤_등락율 < 손절률):
+                        판매(급등코인) # 손절
+                        구매했음 = False
