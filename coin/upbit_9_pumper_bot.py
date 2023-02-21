@@ -54,6 +54,9 @@ def 판매(market_code):
 ## 본 로직
 if __name__ == "__main__":
 
+    # 로그인테스트
+    pyupbit.Upbit(A_key, S_key)
+
     while True:
         현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
         if("09:" in 현재날짜):
