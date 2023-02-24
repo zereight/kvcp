@@ -57,6 +57,11 @@
     "prestart:pump": "rm -rf nohup2.out",
     "prestart:yesterday": "rm -rf nohup3.out",
     "prestart:today": "rm -rf nohup4.out",
+    "test": "test",
+    "start:9": "nohup python3 upbit_9_pumper_bot.py > nohup9.out &",
+    "start:859": "nohup python3 upbit_859_pumper_bot.py > nohup859.out &",
+    "stop:9": "ps -ef | grep upbit_9_pumper_bot",
+    "stop:859": "ps -ef | grep upbit_859_pumper_bot",
     "kill": "kill -9"
   }
 }

@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
         while True:
             현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
-            if("09:00" in 현재날짜):
+            if("08:59" in 현재날짜):
                 # 9시가 되면, 원화마켓에 대해서 웹소켓 연결
                 krw_tickers = pyupbit.get_tickers(fiat="KRW")
                 krw_tickers = list(filter(lambda x: x not in 제외코인, krw_tickers))
