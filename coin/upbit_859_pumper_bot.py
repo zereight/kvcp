@@ -25,7 +25,7 @@ S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 최대수집데이터량 = 10000
 급등코인 = ""
 
-제외코인 = ["KRW-BTT", "KRW-XRP"]
+제외코인 = ["KRW-BTT", "KRW-XRP"] # 리퍼리움 빼야하나..
 
 def get_price_scale_tick(_price):   
     if _price >= 2000000: 
@@ -77,8 +77,9 @@ if __name__ == "__main__":
     if(pyupbit.Upbit(A_key, S_key).get_balance("KRW-BTC") == None):
         print("업비트 로그인 에러")
     else:
-
-        while True:
+        excel_data = pd.DataFrame()
+        count  = 0
+        while count != 최대수집데이터량:
             현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M')
             if("08:59" in 현재날짜):
                 # 9시가 되면, 원화마켓에 대해서 웹소켓 연결
@@ -93,8 +94,7 @@ if __name__ == "__main__":
                 )
                 proc.start()
 
-                excel_data = pd.DataFrame()
-                count  = 0
+
 
                 # 9시 웹소켓 로직 실행
                 while True:
@@ -130,18 +130,20 @@ if __name__ == "__main__":
                         급등코인_n개중_몇개 = 최근_n개데이터[최근_n개데이터["ask_bid"] == "BID"]["code"].value_counts(sort=True).values[0]
                         
                         print(f"{급등코인_n개중_몇개} / 100개 감지됨")
-                        구매데이터 = 시장가매수(급등코인)
                         
-                        내가_구매했던_데이터 = pyupbit.Upbit(A_key, S_key).get_order(구매데이터["uuid"][0])
-                        
-                        # 아직 체결이 안된 경우가 있을 수 있는듯
-                        while(len(내가_구매했던_데이터["trades"]) == 0):
-                            pass
-                        
-                        내가_구매했던_코인가격 = float(내가_구매했던_데이터["trades"][0]["price"])
-                        지정가판매가격 = round(내가_구매했던_코인가격 * 손익률 , get_price_scale_tick(내가_구매했던_코인가격 * 손익률)[0])
-                        print(f'{내가_구매했던_코인가격}에 구매한거를 {지정가판매가격}에 지정가매도')
-                        지정가매도(급등코인, 지정가판매가격)
+                        if(급등코인_n개중_몇개 > 50):
+                            구매데이터 = 시장가매수(급등코인)
+
+                            내가_구매했던_데이터 = pyupbit.Upbit(A_key, S_key).get_order(구매데이터["uuid"][0])
+
+                            # 아직 체결이 안된 경우가 있을 수 있는듯
+                            while(len(내가_구매했던_데이터["trades"]) == 0):
+                                pass
+
+                            내가_구매했던_코인가격 = float(내가_구매했던_데이터["trades"][0]["price"])
+                            지정가판매가격 = round(내가_구매했던_코인가격 * 손익률 , get_price_scale_tick(내가_구매했던_코인가격 * 손익률)[0])
+                            print(f'{내가_구매했던_코인가격}에 구매한거를 {지정가판매가격}에 지정가매도')
+                            지정가매도(급등코인, 지정가판매가격)
 
 
                 # 완전히 종료
