@@ -10,7 +10,7 @@
 import requests, time, jwt, uuid, pyupbit, datetime
 import pandas as pd
 import numpy as np
-from sendMail import send_email
+from python.sendMail import send_email
 import json
 
 f = open("업비트정보.private.json", "r")

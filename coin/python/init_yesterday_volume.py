@@ -3,7 +3,7 @@
 import requests, time, datetime
 import pandas as pd
 from pytz import timezone
-from sendMail import send_email
+from python.sendMail import send_email
 
 def init_yesterday_volume():
     ####################################################################################################

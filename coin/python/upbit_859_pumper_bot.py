@@ -7,7 +7,7 @@ import numpy as np
 import datetime
 import json
 from pytz import timezone
-from sendMail import send_email
+from python.sendMail import send_email
 from getPriceScaleTick import get_price_scale_tick
 import time
 import requests, jwt, uuid

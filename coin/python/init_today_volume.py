@@ -5,7 +5,7 @@ import requests, time, datetime, jwt, uuid, pyupbit
 import pandas as pd
 import json
 from pytz import timezone
-from sendMail import send_email
+from python.sendMail import send_email
 
 f = open("업비트정보.private.json", "r")
 api_key = json.load(f)
