@@ -8,7 +8,7 @@ from upbit_module import 시장가매수, 지정가매도
 import json
 from getPriceScaleTick import get_price_scale_tick
 
-f = open("../업비트정보.private.json", "r")
+f = open("업비트정보.private.json", "r")
 api_key = json.load(f)
 f.close()
 
