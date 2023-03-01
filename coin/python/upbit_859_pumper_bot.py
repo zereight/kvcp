@@ -1,3 +1,12 @@
+# sudo yum install git
+# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+# . ~/.nvm/nvm.sh
+# nvm install v16.19.1
+# nvm use v16.19.1
+# pip3 install pyupbit
+# pip3 install openpyxl
+# *.private.json setting
+
 # https://docs.upbit.com/docs/upbit-quotation-websocket
 
 import multiprocessing as mp
@@ -7,8 +16,9 @@ import numpy as np
 import datetime
 import json
 from pytz import timezone
-from python.sendMail import send_email
+from sendMail import send_email
 from getPriceScaleTick import get_price_scale_tick
+from upbit_module import 시장가매수, 지정가매도
 import time
 import requests, jwt, uuid
 
@@ -23,34 +33,11 @@ S_key = api_key["secretKey"]  # 본인 secret_key 키로 변경
 손익률 = 1.03
 
 내가_구매했던_가격 = 0
-최대수집데이터량 = 10000
+최대수집데이터량 = 200
 급등코인 = ""
 감지데이터수 = 100
 
 제외코인 = ["KRW-BTT", "KRW-XRP"] # 리퍼리움 빼야하나..
-
-def 시장가매수(market_code):
-    print(f'{market_code} 구매')
-    ## API로 업비트에서 내 계좌 조회
-    my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts", headers={"Authorization": 'Bearer {}'.format(jwt.encode({'access_key': A_key,'nonce': str(uuid.uuid4())}, S_key))}).json())
-    print(my_exchange_account)
-    now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
-    # 원화의 50%를 매수, 보유원화의 75%를 넘으면 에러를 뱉는다는 소리가 있음
-    order_amount = round(now_krw * 0.5)
-    send_email(f'{market_code} 구매', f"9시 펌핑코인 {order_amount}원 시장가 매수")
-
-    buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key).buy_market_order(market_code, order_amount), orient='index').T
-
-    return buy_market_order_data
-
-def 지정가매도(market_code, 판매할가격):
-    print(f'{market_code} 판매')
-    order_quantity = pyupbit.Upbit(A_key, S_key).get_balance(market_code)
-    send_email(f'{market_code} 판매', f"9시 펌핑코인 {order_quantity}개 지정가 매도")
-    sell_market_order_data = pd.DataFrame.from_dict(
-        pyupbit.Upbit(A_key, S_key).sell_limit_order(market_code, 판매할가격 ,order_quantity), orient='index').T
-
-    return sell_market_order_data
 
 ## 본 로직
 if __name__ == "__main__":
@@ -66,7 +53,7 @@ if __name__ == "__main__":
             현재날짜 = datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M:%S')
             pass
 
-        # 9시가 되면, 원화마켓에 대해서 웹소켓 연결
+        # 08:59:5 시가 되면, 원화마켓에 대해서 웹소켓 연결
         krw_tickers = pyupbit.get_tickers(fiat="KRW")
         krw_tickers = list(filter(lambda x: x not in 제외코인, krw_tickers))
 
@@ -78,9 +65,7 @@ if __name__ == "__main__":
         )
         proc.start()
 
-
-
-        # 9시 웹소켓 로직 실행
+        # 웹소켓 로직 실행
         while count < 최대수집데이터량:
             count+=1
             data = queue.get()
@@ -112,7 +97,7 @@ if __name__ == "__main__":
                 print(f"{급등코인_n개중_몇개} / {감지데이터수}개 감지됨")
 
                 if(급등코인_n개중_몇개 > (감지데이터수 * 0.5)):
-                    구매데이터 = 시장가매수(급등코인)
+                    구매데이터 = 시장가매수(급등코인, A_key, S_key)
 
                     내가_구매했던_데이터 = pyupbit.Upbit(A_key, S_key).get_order(구매데이터["uuid"][0])
 
@@ -123,7 +108,7 @@ if __name__ == "__main__":
                     내가_구매했던_코인가격 = float(내가_구매했던_데이터["trades"][0]["price"])
                     지정가판매가격 = round(내가_구매했던_코인가격 * 손익률 , get_price_scale_tick(내가_구매했던_코인가격 * 손익률)[0])
                     print(f'{내가_구매했던_코인가격}에 구매한거를 {지정가판매가격}에 지정가매도')
-                    지정가매도(급등코인, 지정가판매가격)
+                    지정가매도(급등코인, A_key, S_key, 지정가판매가격)
                     
         # 수집 다했으면 저장
         excel_data.to_excel(f'급등데이터_{현재날짜}.xlsx', index=False)
