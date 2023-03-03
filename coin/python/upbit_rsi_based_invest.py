@@ -27,6 +27,8 @@ is_already_bought = False
 down_bound = 28
 up_bound = 65
 
+이미구매한코인 = []
+
 
 while True:
     if sec % 3600 == 0:
@@ -73,12 +75,13 @@ while True:
         RSI_value_number = float(RSI_value['RSI']) * 100 
         print(f'15분봉 RSI값은 {RSI_value_number}')
         
-        if(RSI_value_number <= down_bound):
+        if(RSI_value_number <= down_bound and market_code not in 이미구매한코인):
             
             my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts", headers={"Authorization": 'Bearer {}'.format(jwt.encode({'access_key': A_key,'nonce': str(uuid.uuid4())}, S_key))}).json())
             now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
-            if(now_krw >= 5000):
+            if(now_krw >= 6000):
                 구매데이터 = 시장가매수(market_code, A_key, S_key)
+                이미구매한코인.append(market_code)
                 내가_구매했던_데이터 = pyupbit.Upbit(A_key, S_key).get_order(구매데이터["uuid"][0])
 
                 # 아직 체결이 안된 경우가 있을 수 있는듯
@@ -87,11 +90,11 @@ while True:
                     pass
 
                 내가_구매했던_코인가격 = float(내가_구매했던_데이터["trades"][0]["price"])
-                지정가판매가격_temp = 내가_구매했던_코인가격 * 1.02 
+                지정가판매가격_temp = 내가_구매했던_코인가격 * 1.005 # 0.5%수익
                 지정가판매가격 = round(지정가판매가격_temp , get_price_scale_tick(지정가판매가격_temp)[0])
                 print(f'{내가_구매했던_코인가격}에 구매한거를 {지정가판매가격}에 지정가매도')
                 지정가매도(market_code, A_key, S_key, 지정가판매가격)
-                time.sleep(60 * 30) # 30분대기
+                time.sleep(60 * 60) # 60분대기
             else:
                 print("원화부족")
         

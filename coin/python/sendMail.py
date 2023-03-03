@@ -7,7 +7,7 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 
 import json
-f = open("메일정보.private.json", "r")
+f = open("../메일정보.private.json", "r")
 
 email_info = json.load(f)
 

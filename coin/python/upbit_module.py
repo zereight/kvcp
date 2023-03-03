@@ -10,8 +10,8 @@ def 시장가매수(market_code, A_key, S_key):
     my_exchange_account = pd.DataFrame(requests.get("https://api.upbit.com/v1/accounts", headers={"Authorization": 'Bearer {}'.format(jwt.encode({'access_key': A_key,'nonce': str(uuid.uuid4())}, S_key))}).json())
     print(my_exchange_account)
     now_krw = float(my_exchange_account[my_exchange_account['currency'] == 'KRW']['balance'][0])
-    # 원화의 50%를 매수, 보유원화의 75%를 넘으면 에러를 뱉는다는 소리가 있음
-    order_amount = round(5000) # round(now_krw * 0.2)
+    # 보유원화의 75%를 넘으면 에러를 뱉는다는 소리가 있음
+    order_amount = 6000 # round(now_krw * 0.2)
     send_email(f'{market_code} 구매', f"9시 펌핑코인 {order_amount}원 시장가 매수")
 
     buy_market_order_data = pd.DataFrame.from_dict(pyupbit.Upbit(A_key, S_key).buy_market_order(market_code, order_amount), orient='index').T
